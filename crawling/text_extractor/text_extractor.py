@@ -17,7 +17,7 @@ class TextExtractor:
         if type(doc) is not dict:
             raise ValueError("doc should be a dict")
 
-        full_text = doc['full_text']
+        full_text = doc['fullText']
 
         nlu = watson_developer_cloud.NaturalLanguageUnderstandingV1(version='2017-02-27',
                                                                 username=os.getenv("WATSON_USERNAME"),
@@ -49,7 +49,7 @@ class TextExtractor:
 def main():
     te = TextExtractor()
     orig_doc = {
-        "full_text": 'this is my experimental text.  Bruce Banner is the Hulk and Bruce Wayne is BATMAN! Superman fears not Banner, but Wayne.'
+        "fullText": 'this is my experimental text.  Bruce Banner is the Hulk and Bruce Wayne is BATMAN! Superman fears not Banner, but Wayne.'
     }
     annotated = te.annotateDoc(orig_doc)
     print(annotated)
