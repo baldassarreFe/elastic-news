@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import urllib.request
 
+
 class ArticleParser():
     def __init__(self):
         self.parsers = {}
@@ -23,8 +24,21 @@ def reuters_parser(article_metadata, article_soup):
     }
 
 
+def cnn_parser(article_metadata, article_soup):
+    paragraphs = article_soup.select('.zn-body__paragraph')
+    # Remove <cite class="el-editorial-source"> (CNN)</cite> from first paragraph
+    if len(paragraphs)>0:
+        citation = paragraphs[0].select(".el-editorial-source")
+        if len(citation)>0:
+            citation[0].extract()
+    return {
+        **article_metadata,
+        'fullText': ''.join([p.get_text() for p in paragraphs])
+    }
+
+
 if __name__ == '__main__':
-    article_metadata = {
+    articles = [{
         'author': 'Lesley Wroughton and Yeganeh Torbati',
         'source': 'reuters',
         'title': 'U.S. air strike gives Tillerson a boost for Moscow talks',
@@ -32,9 +46,20 @@ if __name__ == '__main__':
         'url': 'http://www.reuters.com/article/us-usa-russia-tillerson-idUSKBN17C0D4',
         'urlToImage': 'http://s3.reutersmedia.net/resources/r/?m=02&d=20170410&t=2&i=1180051153&w=&fh=545px&fw=&ll=&pl=&sq=&r=LYNXMPED39077',
         'publishedAt': '2017-04-10T08:08:52Z'
-    }
+    },
+    {
+        "author": "Ben Westcott, CNN",
+        "source": "cnn",
+        "title": "US warns Russia over support for Assad",
+        "description": "Foreign ministers of leading industrialized nations were meeting Monday amid heightened tensions between Russia and the United States over the Trump administration's unexpected military strike on a Syrian airbase.",
+        "url": "http://www.cnn.com/2017/04/10/politics/syria-russia-iran-missile-strikes/index.html",
+        "urlToImage": "http://i2.cdn.cnn.com/cnnnext/dam/assets/170328141858-russia-jet-syria-tease-super-tease.jpg",
+        "publishedAt": "2017-04-10T09:59:38Z"
+    }]
 
     ap = ArticleParser()
     ap.add_parser('reuters', reuters_parser)
+    ap.add_parser('cnn', cnn_parser)
 
-    print(ap.parse_article(article_metadata)['fullText'])
+    for article in articles[-1:]:
+        print(ap.parse_article(article)['fullText'])
