@@ -1,7 +1,7 @@
 from tinydb import TinyDB, where
 
-class NewsStorage:
 
+class NewsStorage:
     def __init__(self, db_path):
         self.db_path = db_path
         self.db = TinyDB(db_path)

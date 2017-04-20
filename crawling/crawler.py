@@ -9,8 +9,8 @@ from text_enrichment.text_enrichment import TextEnricher
 
 db_path = "documents.json"
 
-class Crawler:
 
+class Crawler:
     def get_docs(self, db):
         new_api = NewsAPI()
         news = new_api.getnews()
@@ -38,13 +38,13 @@ class Crawler:
 
 
 def main(argv):
-
     storage = NewsStorage(db_path)
 
     crawler = Crawler()
     news = crawler.get_docs(storage)
 
     storage.add_news(news)
+
 
 def load_docs():
     storage = NewsStorage(db_path)
@@ -53,6 +53,7 @@ def load_docs():
     print("Example:")
     print(all_docs[0])
 
+
 if __name__ == "__main__":
     main(sys.argv)
-    #load_docs()
+    # load_docs()
