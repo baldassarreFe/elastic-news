@@ -36,6 +36,13 @@ def cnn_parser(article_metadata, article_soup):
         'fullText': ''.join([p.get_text() for p in paragraphs])
     }
 
+def the_guardian_uk_parser(article_metadata, article_soup):
+	paragraphs = article_soup.find("div", { "class" : "content__article-body from-content-api js-article__body" })
+	return{
+		**article_metadata,
+		'fullText':''.join([p.get_text() for p in paragraphs.select('p')])	
+	}
+
 
 if __name__ == '__main__':
     articles = [{
@@ -55,11 +62,21 @@ if __name__ == '__main__':
         "url": "http://www.cnn.com/2017/04/10/politics/syria-russia-iran-missile-strikes/index.html",
         "urlToImage": "http://i2.cdn.cnn.com/cnnnext/dam/assets/170328141858-russia-jet-syria-tease-super-tease.jpg",
         "publishedAt": "2017-04-10T09:59:38Z"
-    }]
+    },
+	{
+		"author": "Dan Roberts, Lisa O'Carroll",
+		"source": "the-guardian-uk",
+		"title": "European parliament chief urges May to agree swift deal on EU citizens",
+		"description": "Antonio Tajani presses PM to defend rights of those in UK and strikes more positive note than some on timing of trade talks",
+		"url": "https://www.theguardian.com/politics/2017/apr/20/european-parliament-chief-urges-may-to-agree-swift-deal-on-eu-citizens",
+		"urlToImage": "https://i.guim.co.uk/img/media/2167d3a064f8c3fecea66292e9f395c58bc69d6a/0_216_5148_3089/master/5148.jpg?w=1200&h=630&q=55&auto=format&usm=12&fit=crop&crop=faces%2Centropy&bm=normal&ba=bottom%2Cleft&blend64=aHR0cHM6Ly91cGxvYWRzLmd1aW0uY28udWsvMjAxNi8wNS8yNS9vdmVybGF5LWxvZ28tMTIwMC05MF9vcHQucG5n&s=355554190462a67ac23423766b5efa3d",
+		"publishedAt": "2017-04-20T12:25:00Z"
+	}]
 
     ap = ArticleParser()
     ap.add_parser('reuters', reuters_parser)
     ap.add_parser('cnn', cnn_parser)
+    ap.add_parser('the-guardian-uk', the_guardian_uk_parser)
 
     for article in articles[-1:]:
         print(ap.parse_article(article)['fullText'])

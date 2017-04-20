@@ -7,6 +7,7 @@ if __name__ == '__main__':
     ap = ArticleParser()
     ap.add_parser('reuters', reuters_parser)
     ap.add_parser('cnn', cnn_parser)
+    ap.add_parser('the-guardian-uk', the_guardian_uk_parser)
 
     for article in news_api.getnews():
         article = ap.parse_article(article)

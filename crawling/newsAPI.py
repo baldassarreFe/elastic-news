@@ -6,7 +6,7 @@ class NewsAPI():
 	def __init__(self):
 		load_dotenv(find_dotenv())
 		self.key = os.environ.get("APIKEY")
-		self.news_sources = ["cnn"]
+		self.news_sources = ["reuters","cnn","the-guardian-uk"]
 		self.base_URI = "https://newsapi.org/v1/articles?"
 
 
@@ -29,6 +29,5 @@ class NewsAPI():
 
 if __name__ == '__main__':
 	news_api = NewsAPI()
-
 	print(json.dumps(news_api.getnews(), indent=4, sort_keys=True))
 
