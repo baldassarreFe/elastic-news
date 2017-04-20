@@ -1,10 +1,11 @@
 from bs4 import BeautifulSoup
 import urllib.request
+from text_extractor.text_extractor import TextExtractor
 
 
 class ArticleParser():
     def __init__(self):
-        self.parsers = {}
+        self.parsers = all_parsers()
 
     def parse_article(self, article_metadata):
         with urllib.request.urlopen(article_metadata['url']) as response:
@@ -43,6 +44,14 @@ def the_guardian_uk_parser(article_metadata, article_soup):
 		'fullText':''.join([p.get_text() for p in paragraphs.select('p')])	
 	}
 
+def all_parsers():
+    return {
+        "reuters": reuters_parser,
+        "cnn": cnn_parser,
+		"the-guardian-uk": the_guardian_uk_parser
+    }
+
+
 
 if __name__ == '__main__':
     articles = [{
@@ -78,5 +87,9 @@ if __name__ == '__main__':
     ap.add_parser('cnn', cnn_parser)
     ap.add_parser('the-guardian-uk', the_guardian_uk_parser)
 
+    te = TextExtractor()
+
     for article in articles[-1:]:
-        print(ap.parse_article(article)['fullText'])
+        parsed = ap.parse_article(article)
+        annotated = te.annotateDoc(parsed)
+        print(annotated)
