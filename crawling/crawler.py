@@ -1,11 +1,11 @@
 #!/bin/python3
 
+import sys
+
+from article_parsing import ArticleParser
 from newsAPI import NewsAPI
 from newsStorage import NewsStorage
-from text_processing import ArticleParser
-from text_extractor.text_extractor import TextExtractor
-
-import sys
+from text_enrichment.text_enrichment import TextEnricher
 
 db_path = "documents.json"
 
@@ -16,7 +16,7 @@ class Crawler:
         news = new_api.getnews()
 
         ap = ArticleParser()
-        te = TextExtractor()
+        te = TextEnricher()
 
         docs = []
         for doc in news:
@@ -27,7 +27,7 @@ class Crawler:
             parsed = ap.parse_article(doc)
             annotated = None
             try:
-                annotated = te.annotateDoc(parsed)
+                annotated = te.enrichDocument(parsed)
             except:
                 sys.stderr.write("Skipping doc, problem with parsing for " + doc_url + "\n")
             if annotated is not None:

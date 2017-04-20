@@ -1,4 +1,4 @@
-from text_processing import *
+from article_parsing import *
 from newsAPI import NewsAPI
 
 if __name__ == '__main__':
