@@ -78,6 +78,14 @@ def the_economist_parser(article_metadata, article_soup):
     else:
         return None
 
+def business_insider_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"class": "article-body"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"class": "article-body"}).select("p")])}
+    elif article_soup.find("div", {"class": "KonaBody post-content"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"class": "KonaBody post-content"}).select("p")])}
+    else:
+        return None
+
 def all_parsers():
     return {
         "reuters": reuters_parser,
@@ -86,7 +94,8 @@ def all_parsers():
         "the-new-york-times": the_new_york_times_parser,
         "bbc-news": bbc_news_parser,
         "daily-mail": daily_mail_parser,
-        "the-economist": the_economist_parser
+        "the-economist": the_economist_parser,
+        "business-insider": business_insider_parser
     }
 
 
@@ -153,14 +162,23 @@ if __name__ == '__main__':
             "url": "http://www.economist.com/news/americas/21721235-despite-mounting-scandal-government-soldiers-new-brazilian-corruption-probes-and-their",
             "urlToImage": "http://cdn.static-economist.com/sites/default/files/images/print-edition/20170422_AMD001_0.jpg",
             "publishedAt": "2017-04-20T14:48:45+00:00"
-        },]
+        },
+        {
+            "author": "Allan Smith",
+            "source": "business-insider",
+            "title": "John Kasich, a former Fox News host, responds to Bill O'Reilly's ouster",
+            "description": "Kasich, who hosted a Fox News program, said he \"wouldn't have stayed\" at the right-leaning news network if he witnessed a culture of sexual harassment.",
+            "url": "http://www.businessinsider.com/john-kasich-fox-news-bill-oreilly-2017-4",
+            "urlToImage": "http://static4.businessinsider.com/image/58fe3e3f7522ca3a268b590e-1190-625/john-kasich-a-former-fox-news-host-responds-to-bill-oreillys-ouster.jpg",
+            "publishedAt": "2017-04-24T19:18:30+00:00"
+        }]
 
     ap = ArticleParser()
     
 
     #te = TextEnricher()
 
-    for article in articles[-1:]:
+    for article in articles:
         parsed = ap.parse_article(article)
         #annotated = te.enrichDocument(parsed)
         print(parsed)
