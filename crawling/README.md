@@ -1,7 +1,7 @@
 # Crawling the web for news
 
 ## Api used
-* [NewsAPI](newsapi.org)
+* [NewsAPI](https://newsapi.org)
 * [IBM Watson](https://www.ibm.com/watson/developercloud/natural-language-understanding.html)
 
 ## Elasticsearch requirements
