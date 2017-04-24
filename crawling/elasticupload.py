@@ -1,6 +1,6 @@
-from datetime import datetime
-
 from elasticsearch import Elasticsearch
+
+import crawler
 
 
 class ElasticClient:
@@ -8,28 +8,29 @@ class ElasticClient:
         self.es = Elasticsearch()
 
     def index(self, doc):
-        return self.es.index(index="test-index", doc_type='tweet', id=doc['url'], body=doc)
+        return self.es.index(
+            index='news',
+            doc_type='article',
+            id=doc['url'],
+            body=doc)
 
 
 if __name__ == '__main__':
     es = Elasticsearch()
-
-    doc = {
-        'author': 'kimchy',
-        'url'
-        'text': 'Elasticsearch: cool. bonsai cool.',
-        'timestamp': datetime.now(),
-    }
-
     ec = ElasticClient()
-    ec.index(doc)
 
-    res = es.get(index="test-index", doc_type='tweet', id=1)
-    print(res['_source'])
+    for doc in crawler.load_docs():
+        ec.index(doc)
 
-    es.indices.refresh(index="test-index")
+    es.indices.refresh(index="news")
 
-    res = es.search(index="test-index", body={"query": {"match_all": {}}})
+    res = es.search(index="news", body={
+        "size": 100,
+        "query": {
+            "match_all": {}
+        }
+    })
     print("Got %d Hits:" % res['hits']['total'])
     for hit in res['hits']['hits']:
-        print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
+        doc = hit["_source"]
+        print("{title} - {author}: {url}".format(**doc))
