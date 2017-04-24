@@ -1,8 +1,8 @@
 import urllib.request
-
+from http.cookiejar import CookieJar
 from bs4 import BeautifulSoup
 
-from text_enrichment.text_enrichment import TextEnricher
+#from text_enrichment.text_enrichment import TextEnricher
 
 
 class ArticleParser():
@@ -10,8 +10,11 @@ class ArticleParser():
         self.parsers = all_parsers()
 
     def parse_article(self, article_metadata):
-        with urllib.request.urlopen(article_metadata['url']) as response:
-            article_html = response.read()
+        cj = CookieJar()
+        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+        request = urllib.request.Request(article_metadata['url'])
+        response = opener.open(request)
+        article_html = response.read()
         article_soup = BeautifulSoup(article_html, 'lxml')
         return self.parsers[article_metadata['source']](article_metadata, article_soup)
 
@@ -47,12 +50,19 @@ def the_guardian_uk_parser(article_metadata, article_soup):
     else:
         return None
 
+def the_new_york_times_parser(article_metadata, article_soup):
+    if article_soup.find("p", {"class": "story-body-text story-content"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.select(".story-body-text.story-content")])}
+    else:
+        return None
+
 
 def all_parsers():
     return {
         "reuters": reuters_parser,
         "cnn": cnn_parser,
-        "the-guardian-uk": the_guardian_uk_parser
+        "the-guardian-uk": the_guardian_uk_parser,
+        "the-new-york-times": the_new_york_times_parser
     }
 
 
@@ -83,16 +93,23 @@ if __name__ == '__main__':
             "url": "https://www.theguardian.com/politics/2017/apr/20/european-parliament-chief-urges-may-to-agree-swift-deal-on-eu-citizens",
             "urlToImage": "https://i.guim.co.uk/img/media/2167d3a064f8c3fecea66292e9f395c58bc69d6a/0_216_5148_3089/master/5148.jpg?w=1200&h=630&q=55&auto=format&usm=12&fit=crop&crop=faces%2Centropy&bm=normal&ba=bottom%2Cleft&blend64=aHR0cHM6Ly91cGxvYWRzLmd1aW0uY28udWsvMjAxNi8wNS8yNS9vdmVybGF5LWxvZ28tMTIwMC05MF9vcHQucG5n&s=355554190462a67ac23423766b5efa3d",
             "publishedAt": "2017-04-20T12:25:00Z"
+        },
+        {
+            "author": "Mike Isaac",
+            "source": "the-new-york-times",
+            "title": "Uber’s C.E.O. Plays With Fire",
+            "description": "Travis Kalanick’s drive to win in life has led to a pattern of risk-taking that has at times put his ride-hailing company on the brink of implosion.",
+            "url": "https://www.nytimes.com/2017/04/23/technology/travis-kalanick-pushes-uber-and-himself-to-the-precipice.html",
+            "urlToImage": "https://static01.nyt.com/images/2017/04/19/technology/24travis/00travis-facebookJumbo.gif",
+            "publishedAt": "2017-04-24T13:47:55Z"
         }]
 
     ap = ArticleParser()
-    ap.add_parser('reuters', reuters_parser)
-    ap.add_parser('cnn', cnn_parser)
-    ap.add_parser('the-guardian-uk', the_guardian_uk_parser)
+    
 
-    te = TextEnricher()
+    #te = TextEnricher()
 
     for article in articles[-1:]:
         parsed = ap.parse_article(article)
-        annotated = te.enrichDocument(parsed)
-        print(annotated)
+        #annotated = te.enrichDocument(parsed)
+        print(parsed)
