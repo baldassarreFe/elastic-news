@@ -41,11 +41,11 @@ def cnn_parser(article_metadata, article_soup):
 
 
 def the_guardian_uk_parser(article_metadata, article_soup):
-    paragraphs = article_soup.find("div", {"class": "content__article-body from-content-api js-article__body"})
-    return {
-        **article_metadata,
-        'fullText': ''.join([p.get_text() for p in paragraphs.select('p')])
-    }
+    if article_soup.find("div", {"class": "content__article-body from-content-api js-article__body"}):
+        paragraphs = article_soup.find("div", {"class": "content__article-body from-content-api js-article__body"})
+        return {**article_metadata, 'fullText': ''.join([p.get_text() for p in paragraphs.select('p')])}
+    else:
+        return None
 
 
 def all_parsers():

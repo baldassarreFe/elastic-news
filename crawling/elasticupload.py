@@ -16,7 +16,6 @@ class ElasticClient:
 
 
 if __name__ == '__main__':
-    es = Elasticsearch()
     ec = ElasticClient()
 
     for doc in crawler.load_docs():
