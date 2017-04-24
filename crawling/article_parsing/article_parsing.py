@@ -56,13 +56,26 @@ def the_new_york_times_parser(article_metadata, article_soup):
     else:
         return None
 
+def bbc_news_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"class": "story-body"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.select(".story-body > .story-body__inner > p")])}
+    else:
+        return None
+
+def daily_mail_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"itemprop": "articleBody"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"itemprop": "articleBody"}).select("p")])}
+    else:
+        return None
 
 def all_parsers():
     return {
         "reuters": reuters_parser,
         "cnn": cnn_parser,
         "the-guardian-uk": the_guardian_uk_parser,
-        "the-new-york-times": the_new_york_times_parser
+        "the-new-york-times": the_new_york_times_parser,
+        "bbc-news": bbc_news_parser,
+        "daily-mail": daily_mail_parser
     }
 
 
@@ -102,7 +115,25 @@ if __name__ == '__main__':
             "url": "https://www.nytimes.com/2017/04/23/technology/travis-kalanick-pushes-uber-and-himself-to-the-precipice.html",
             "urlToImage": "https://static01.nyt.com/images/2017/04/19/technology/24travis/00travis-facebookJumbo.gif",
             "publishedAt": "2017-04-24T13:47:55Z"
-        }]
+        },
+        {
+            "author": "BBC News",
+            "source": "bbc-news",
+            "title": "French election: Hollande urges nation to back Macron and reject Le Pen",
+            "description": "President says Emmanuel Macron will \"defend the values which will bring French people together\".",
+            "url": "http://www.bbc.co.uk/news/world-europe-39695686",
+            "urlToImage": "https://ichef.bbci.co.uk/news/1024/cpsprodpb/AA24/production/_95765534_mediaitem95765533.jpg",
+            "publishedAt": "2017-04-24T18:15:08+00:00"
+        },
+        {
+            "author": "By Chris Pleasance",
+            "source": "daily-mail",
+            "title": "British woman is savaged by a shark at Ascension Island",
+            "description": "Dean Gonsalves came to his wife Frankie's aid off the coats of Ascension Island and punched the shark in the nose, forcing it to retreat after it had savaged her leg.",
+            "url": "http://www.dailymail.co.uk/news/article-4439316/British-woman-savaged-shark-Ascension-Island.html",
+            "urlToImage": "http://i.dailymail.co.uk/i/pix/2017/04/24/18/3F907DD400000578-0-image-a-44_1493055733700.jpg",
+            "publishedAt": "2017-04-24T17:44:15Z"
+        },]
 
     ap = ArticleParser()
     
