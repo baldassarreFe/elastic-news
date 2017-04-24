@@ -21,23 +21,23 @@ class ArticleParser():
 
 # TODO move these functions to another file
 def reuters_parser(article_metadata, article_soup):
-    return {
-        **article_metadata,
-        'fullText': ''.join([p.get_text() for p in article_soup.select('#article-text > p')])
-    }
+    if article_soup.find(id="article-text"):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.select('#article-text > p')])}
+    else:
+        return None
 
 
 def cnn_parser(article_metadata, article_soup):
-    paragraphs = article_soup.select('.zn-body__paragraph')
-    # Remove <cite class="el-editorial-source"> (CNN)</cite> from first paragraph
-    if len(paragraphs) > 0:
-        citation = paragraphs[0].select(".el-editorial-source")
-        if len(citation) > 0:
-            citation[0].extract()
-    return {
-        **article_metadata,
-        'fullText': ''.join([p.get_text() for p in paragraphs])
-    }
+    if article_soup.find("div", { "class" : "zn-body__paragraph" }):
+        paragraphs = article_soup.select('.zn-body__paragraph')
+        # Remove <cite class="el-editorial-source"> (CNN)</cite> from first paragraph
+        if len(paragraphs) > 0:
+            citation = paragraphs[0].select(".el-editorial-source")
+            if len(citation) > 0:
+                citation[0].extract()
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in paragraphs])}
+    else:
+        return None
 
 
 def the_guardian_uk_parser(article_metadata, article_soup):
