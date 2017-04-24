@@ -1,6 +1,7 @@
 import urllib.request
 from http.cookiejar import CookieJar
 from bs4 import BeautifulSoup
+import gzip
 
 #from text_enrichment.text_enrichment import TextEnricher
 
@@ -14,7 +15,10 @@ class ArticleParser():
         opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
         request = urllib.request.Request(article_metadata['url'])
         response = opener.open(request)
-        article_html = response.read()
+        article_html = response.read();
+        if response.info().get('Content-Encoding') == 'gzip':
+            article_html = gzip.decompress(article_html)
+        #print(article_html)
         article_soup = BeautifulSoup(article_html, 'lxml')
         return self.parsers[article_metadata['source']](article_metadata, article_soup)
 
@@ -68,6 +72,12 @@ def daily_mail_parser(article_metadata, article_soup):
     else:
         return None
 
+def the_economist_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"class": "blog-post__text"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"class": "blog-post__text"}).select("p")])}
+    else:
+        return None
+
 def all_parsers():
     return {
         "reuters": reuters_parser,
@@ -75,7 +85,8 @@ def all_parsers():
         "the-guardian-uk": the_guardian_uk_parser,
         "the-new-york-times": the_new_york_times_parser,
         "bbc-news": bbc_news_parser,
-        "daily-mail": daily_mail_parser
+        "daily-mail": daily_mail_parser,
+        "the-economist": the_economist_parser
     }
 
 
@@ -133,6 +144,15 @@ if __name__ == '__main__':
             "url": "http://www.dailymail.co.uk/news/article-4439316/British-woman-savaged-shark-Ascension-Island.html",
             "urlToImage": "http://i.dailymail.co.uk/i/pix/2017/04/24/18/3F907DD400000578-0-image-a-44_1493055733700.jpg",
             "publishedAt": "2017-04-24T17:44:15Z"
+        },
+        {
+            "author": "The Economist",
+            "source": "the-economist",
+            "title": "New Brazilian corruption probes and their consequences",
+            "description": "Despite a mounting scandal, the government soldiers on",
+            "url": "http://www.economist.com/news/americas/21721235-despite-mounting-scandal-government-soldiers-new-brazilian-corruption-probes-and-their",
+            "urlToImage": "http://cdn.static-economist.com/sites/default/files/images/print-edition/20170422_AMD001_0.jpg",
+            "publishedAt": "2017-04-20T14:48:45+00:00"
         },]
 
     ap = ArticleParser()
