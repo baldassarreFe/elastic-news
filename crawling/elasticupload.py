@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     doc = {
         'author': 'kimchy',
-        'url'
+        'url': 'www.google.se',
         'text': 'Elasticsearch: cool. bonsai cool.',
         'timestamp': datetime.now(),
     }
