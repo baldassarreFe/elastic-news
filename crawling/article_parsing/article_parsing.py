@@ -44,6 +44,8 @@ def cnn_parser(article_metadata, article_soup):
             if len(citation) > 0:
                 citation[0].extract()
         return {**article_metadata,'fullText': ''.join([p.get_text() for p in paragraphs])}
+    elif article_soup.find("div", { "id" : "storytext" }):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", { "id" : "storytext" }).select("p")])}
     else:
         return None
 
@@ -110,6 +112,18 @@ def bbc_sport_parser(article_metadata, article_soup):
     else:
         return None
 
+def ign_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"itemprop": "articleBody"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"itemprop": "articleBody"}).select("p")])}
+    else:
+        return None
+
+def national_geographic_parser(article_metadata, article_soup):
+    if article_soup.find("span", {"itemprop": "articleBody"}).find("div", {"class": "parbase smartbody section text"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("span", {"itemprop": "articleBody"}).select(".parbase.smartbody.section.text > p")])}
+    else:
+        return None
+
 def all_parsers():
     return {
         "reuters": reuters_parser,
@@ -123,7 +137,9 @@ def all_parsers():
         "independent": independent_parser,
         "fortune": fortune_parser,
         "time": time_parser,
-        "bbc-sport": bbc_sport_parser
+        "bbc-sport": bbc_sport_parser,
+        "ign": ign_parser,
+        "national-geographic": national_geographic_parser
     }
 
 
