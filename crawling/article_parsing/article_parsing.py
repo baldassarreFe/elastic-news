@@ -14,11 +14,13 @@ class ArticleParser():
         cj = CookieJar()
         opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
         request = urllib.request.Request(article_metadata['url'])
-        response = opener.open(request)
+        try:
+            response = opener.open(request)
+        except:
+            return None
         article_html = response.read();
         if response.info().get('Content-Encoding') == 'gzip':
             article_html = gzip.decompress(article_html)
-        #print(article_html)
         article_soup = BeautifulSoup(article_html, 'lxml')
         return self.parsers[article_metadata['source']](article_metadata, article_soup)
 
@@ -33,7 +35,6 @@ def reuters_parser(article_metadata, article_soup):
     else:
         return None
 
-
 def cnn_parser(article_metadata, article_soup):
     if article_soup.find("div", { "class" : "zn-body__paragraph" }):
         paragraphs = article_soup.select('.zn-body__paragraph')
@@ -45,7 +46,6 @@ def cnn_parser(article_metadata, article_soup):
         return {**article_metadata,'fullText': ''.join([p.get_text() for p in paragraphs])}
     else:
         return None
-
 
 def the_guardian_uk_parser(article_metadata, article_soup):
     if article_soup.find("div", {"class": "content__article-body from-content-api js-article__body"}):
@@ -86,6 +86,30 @@ def business_insider_parser(article_metadata, article_soup):
     else:
         return None
 
+def independent_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"itemprop": "articleBody"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"itemprop": "articleBody"}).select("p")])}
+    else:
+        return None
+
+def fortune_parser(article_metadata, article_soup):
+    if article_soup.find("article", {"class": "row"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("article", {"class": "row"}).select("p")])}
+    else:
+        return None
+
+def time_parser(article_metadata, article_soup):
+    if article_soup.find("article", {"class": "row"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("article", {"class": "row"}).select("p")])}
+    else:
+        return None
+
+def bbc_sport_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"class": "story-body"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"class": "story-body"}).findAll("p")])}
+    else:
+        return None
+
 def all_parsers():
     return {
         "reuters": reuters_parser,
@@ -95,7 +119,11 @@ def all_parsers():
         "bbc-news": bbc_news_parser,
         "daily-mail": daily_mail_parser,
         "the-economist": the_economist_parser,
-        "business-insider": business_insider_parser
+        "business-insider": business_insider_parser,
+        "independent": independent_parser,
+        "fortune": fortune_parser,
+        "time": time_parser,
+        "bbc-sport": bbc_sport_parser
     }
 
 
