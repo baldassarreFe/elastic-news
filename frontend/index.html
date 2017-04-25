@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+   <head>
+      <title>News Article Search Engine</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+      <!-- Bootstrap stuff -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+   
+      <!-- Styling -->
+      <style>
+      .bg-header { 
+         background-color: #1abc9c; /* Green */
+         color: #ffffff;
+      }
+      .bg-footer { 
+         background-color: #000000; /* Very dark gray */
+         color: #ffffff;
+      }
+      .bg-body { 
+         background-color: #e9fcf8; /* Very light gray */
+         color: #000000;
+      }
+      .bg-results {
+         background-color: #ffffff; /* Very dark gray */
+         color: #8c8c8c;
+      }
+      .body1 { /* News icon */
+         padding-top: 50px;
+         margin: auto;
+      }
+      .body2 { /* Search field */
+         padding-top: 20px;
+         padding-bottom: 270px;
+         width: 350px;
+         margin: auto;
+      }
+      .header {
+         padding-top: 10px;
+         padding-bottom: 10px;
+      }
+      .footer {
+         padding-top: 30px;
+         padding-bottom: 10px;
+      }
+      </style> 
+
+      <!-- Click handelling scripts -->    
+      <script type="text/javascript">
+
+         function handleClick(form) {
+            if (form.query.value === "") {
+               alert("Search for something...");
+            }
+            else {
+               alert("You are searching for " + form.query.value);
+            }
+         }
+
+      </script> 
+
+   </head>
+
+   <body>
+
+      <div class="bg-header header text-center">
+         <h3>News Article Search Engine</h3>
+      </div>
+      
+
+      <div class="cointainer bg-body">
+         <div class="row">
+
+            <div class="col-md-4 col-md-offset-1 text-center">
+
+               <div class="body1">
+                  <img width="120" height="120" src="news_icon.png" alt="News">
+               </div>
+
+               <div class = "body2">
+               <form>
+                  <div class="input-group">
+                     <input type="text" class="form-control" name="query" placeholder="What are you searching for?" required>
+                        <div class="input-group-btn">
+                           <button type="button" class="btn" onClick="handleClick(this.form)">
+                              <span class="glyphicon glyphicon-search"></span>
+                           </button>
+                        </div>
+                  </div>
+               </form>
+               </div>
+
+            </div>
+
+            <div class="col-md-5 col-md-offset-1 text-center">
+               <div class="body1">
+                  <h3>Results</h3>
+
+                  <div class="row">
+                     <div class="col-md-12 col-md-offset-0 bg-results"> 
+                        
+                     </div>   
+                  </div>
+
+               </div>
+            </div>
+
+         </div>
+      </div>
+      
+
+      <footer class="footer bg-footer text-center">
+         <p>Website Created April 25, 2017</p> 
+      </footer>
+
+   </body>
+</html>
