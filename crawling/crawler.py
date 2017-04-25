@@ -49,11 +49,10 @@ def main(argv):
 def load_docs():
     storage = NewsStorage(db_path)
     all_docs = storage.get_all()
-    print(len(all_docs), "docs")
-    print("Example:")
-    print(all_docs[0])
+    return all_docs
 
 
 if __name__ == "__main__":
     main(sys.argv)
-    # load_docs()
+    load_docs()
+

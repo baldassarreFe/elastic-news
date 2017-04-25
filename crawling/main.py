@@ -4,11 +4,12 @@ from newsAPI import NewsAPI
 if __name__ == '__main__':
     news_api = NewsAPI()
 
-    ap = ArticleParser()
-    ap.add_parser('reuters', reuters_parser)
-    ap.add_parser('cnn', cnn_parser)
-    ap.add_parser('the-guardian-uk', the_guardian_uk_parser)
+    ap = ArticleParser()    
 
+    i = 0
     for article in news_api.getnews():
         article = ap.parse_article(article)
-        print(article['fullText'])
+        if article is not None:
+            i+=1
+            print(article)
+    print(str(i) + " news found.")
