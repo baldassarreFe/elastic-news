@@ -177,3 +177,54 @@ curl -X GET 'http://localhost:9200/news/article/_search?explain&pretty' -d \
   }
 }'
 ```
+GET _search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "multi_match": {
+            "query": "Trump", 
+            "fields": ["fullText^100", "title^100"]
+          }
+        }
+      ],
+      "should": [
+        {
+          "match": {
+            "fullText": "New York, program, Foreign, program"
+          }
+        },
+        {
+          "terms": {
+            "entities.keyword": [
+              "Germany"
+              ]
+          }
+        },
+        {
+          "term": {
+            "source.keyword": {
+              "value": "cnn",
+              "boost": 3
+            }
+          }
+        },
+        {
+          "term": {
+            "source.keyword": {
+              "value": "reuters",
+              "boost": 6
+            }
+          }
+        },
+        {
+          "match": {
+            "author": "Tal"
+          }
+        }
+      ]
+    }
+  }
+}
+```
