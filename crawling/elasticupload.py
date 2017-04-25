@@ -21,9 +21,9 @@ if __name__ == '__main__':
     for doc in crawler.load_docs():
         ec.index(doc)
 
-    es.indices.refresh(index="news")
+    ec.es.indices.refresh(index="news")
 
-    res = es.search(index="news", body={
+    res = ec.es.search(index="news", body={
         "size": 100,
         "query": {
             "match_all": {}
