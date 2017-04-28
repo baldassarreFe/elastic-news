@@ -6,18 +6,19 @@ var client = new elasticsearch.Client({
     log: 'trace'
 });
 
-function queryWithUserString(user_query) {
+function queryWithUserString(user_query, maxResults) {
     return {
         index: 'news',
         type: 'article',
         body: {
-            size: 10,
+            size: maxResults,
             query: {
                 bool: {
-                    should: [
+                    must: [
                         {
-                            match: {
-                                fullText: user_query
+                            multi_match: {
+                                query: user_query,
+                                fields: ["fullText^1", "title^2"]
                             }
                         }
                     ]
@@ -28,19 +29,15 @@ function queryWithUserString(user_query) {
 }
 
 exports.simpleSearch = function (user_query, maxResults) {
-    var searchParams = queryWithUserString(user_query);
+    var searchParams = queryWithUserString(user_query, maxResults);
 
-    client.search(searchParams, function (err, res) {
-        if (err) {
-            throw err;
-        }
-
-        console.log(res.hits.hits);
-    })
-}
+    return client.search(searchParams)
+        .then(function(res) {return res.hits.hits.map(function(x) {return x._source})})
+        .catch(function(err) {return Promise.resolve([])})
+};
 
 exports.feedbackSearch = function (user_query, relevantDocuments, maxResults) {
-    var searchParams = queryWithUserString(user_query)
+    var searchParams = queryWithUserString(user_query, maxResults);
 
     var length = relevantDocuments.length;
     var length_key;
