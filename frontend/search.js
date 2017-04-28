@@ -59,12 +59,22 @@ module.exports = {
             }
         }
 
+        length = keywords.length;
+        for(var i = 0; i < length; i++)
+        {
+            searchParams.body.query.bool.should.push({
+                match: {
+                    fullText: keywords[i]                
+                }
+            });
+        }
+        
         client.search(searchParams, function(err, res){
             if(err){
                 throw err;
             }
 
-            
+            console.log(res.hits.hits);
         })
     }
 }
