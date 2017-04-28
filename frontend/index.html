@@ -14,10 +14,10 @@
 
    
       <!-- CSS -->
-      <link rel="stylesheet" type="text/css" href="styling.css"></link>
+      <link rel="stylesheet" type="text/css" href="styling.css"/>
 
       <!-- Scripts -->    
-      <script src="funcs.js"></script>
+      <script src="bundle.js"></script>
 
    </head>
 
@@ -38,11 +38,11 @@
                </div>
 
                <div class = "body2">
-               <form>
+               <form onsubmit="return false;">
                   <div class="input-group">
                      <input type="text" class="form-control" name="query" id="query" placeholder="What are you searching for?" required>
                         <div class="input-group-btn">
-                           <button type="button" class="btn" onClick="handleClick(this.form)">
+                           <button type="submit" class="btn">
                               <span class="glyphicon glyphicon-search"></span>
                            </button>
                         </div>
