@@ -16,8 +16,8 @@
    padding-top: 20px;
 }
 .fixed-panel {
-  min-height: 350px;
-  max-height: 350px;
+  min-height: 300px;
+  max-height: 300px;
   overflow-y: scroll;
 }
 .body1 { /* News icon */
