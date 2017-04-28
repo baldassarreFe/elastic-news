@@ -13,57 +13,11 @@
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
    
-      <!-- Styling -->
-      <style>
-      .bg-header { 
-         background-color: #1abc9c; /* Green */
-         color: #ffffff;
-      }
-      .bg-footer { 
-         background-color: #000000; /* Very dark gray */
-         color: #ffffff;
-      }
-      .bg-body { 
-         background-color: #e9fcf8; /* Very light gray */
-         color: #000000;
-      }
-      .bg-results {
-         background-color: #ffffff; /* Very dark gray */
-         color: #8c8c8c;
-      }
-      .body1 { /* News icon */
-         padding-top: 50px;
-         margin: auto;
-      }
-      .body2 { /* Search field */
-         padding-top: 20px;
-         padding-bottom: 270px;
-         width: 350px;
-         margin: auto;
-      }
-      .header {
-         padding-top: 10px;
-         padding-bottom: 10px;
-      }
-      .footer {
-         padding-top: 30px;
-         padding-bottom: 10px;
-      }
-      </style> 
+      <!-- CSS -->
+      <link rel="stylesheet" type="text/css" href="styling.css"></link>
 
-      <!-- Click handelling scripts -->    
-      <script type="text/javascript">
-
-         function handleClick(form) {
-            if (form.query.value === "") {
-               alert("Search for something...");
-            }
-            else {
-               alert("You are searching for " + form.query.value);
-            }
-         }
-
-      </script> 
+      <!-- Scripts -->    
+      <script src="funcs.js"></script>
 
    </head>
 
@@ -86,7 +40,7 @@
                <div class = "body2">
                <form>
                   <div class="input-group">
-                     <input type="text" class="form-control" name="query" placeholder="What are you searching for?" required>
+                     <input type="text" class="form-control" name="query" id="query" placeholder="What are you searching for?" required>
                         <div class="input-group-btn">
                            <button type="button" class="btn" onClick="handleClick(this.form)">
                               <span class="glyphicon glyphicon-search"></span>
@@ -103,8 +57,8 @@
                   <h3>Results</h3>
 
                   <div class="row">
-                     <div class="col-md-12 col-md-offset-0 bg-results"> 
-                        
+                     <div class="col-md-12 col-md-offset-0 bg-results text-left fixed-panel" style="border:1px solid #cecece;"> 
+                        <p><span id='display'></span></p>
                      </div>   
                   </div>
 
