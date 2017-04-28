@@ -12,6 +12,6 @@
     "elasticsearch": "^13.0.0"
   },
   "devDependencies": {
-    "browserify": "^14.3.0",
+    "browserify": "^14.3.0"
   }
 }
