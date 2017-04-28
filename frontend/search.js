@@ -5,10 +5,10 @@ var client = new elasticsearch.Client({
     host: 'http://localhost:9200',
     log: 'trace'
 });
-exports.simpleSearch = function (user_query) {
+exports.simpleSearch = function (user_query, maxResults) {
 
 }
-exports.feedbackSearch = function (user_query, relevantDocuments) {
+exports.feedbackSearch = function (user_query, relevantDocuments, maxResults) {
     console.log('relevance search')
 };
 
