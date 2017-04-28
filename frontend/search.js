@@ -15,6 +15,7 @@ module.exports = {
             index: 'news',
             type: 'article',
             body:{
+                size: 10,
                 query:{
                     bool:{
                         should: [
@@ -62,11 +63,7 @@ module.exports = {
         length = keywords.length;
         for(var i = 0; i < length; i++)
         {
-            searchParams.body.query.bool.should.push({
-                match: {
-                    fullText: keywords[i]                
-                }
-            });
+            searchParams.body.query.bool.should[0].match.fullText += (" " + keywords[i]);
         }
         
         client.search(searchParams, function(err, res){
