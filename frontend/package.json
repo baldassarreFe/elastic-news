@@ -4,14 +4,16 @@
   "description": "",
   "main": "funcs.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "browserify index.js funcs.js search.js > bundle.js",
+    "watch": "watchify index.js funcs.js search.js -v -o bundle.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "elasticsearch": "^13.0.0"
+    "elasticsearch": "^13.0.0",
+    "jquery": "^3.2.1"
   },
   "devDependencies": {
-    "browserify": "^14.3.0",
+    "browserify": "^14.3.0"
   }
 }
