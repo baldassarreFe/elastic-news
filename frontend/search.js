@@ -1,9 +1,9 @@
-var elasticsearch = require('elasticsearch');
-var Promise = require('promise');
+const elasticsearch = require('elasticsearch');
+const Promise = require('promise');
 
-var client = new elasticsearch.Client({
+let client = new elasticsearch.Client({
     host: 'http://localhost:9200',
-    log: 'trace'
+    log: ['error', 'warning']
 });
 
 function queryWithUserString(user_query, maxResults) {
@@ -28,63 +28,63 @@ function queryWithUserString(user_query, maxResults) {
     };
 }
 
-exports.simpleSearch = function (user_query, maxResults) {
-    var searchParams = queryWithUserString(user_query, maxResults);
+exports.simpleSearch = (user_query, maxResults) => {
+    let searchParams = queryWithUserString(user_query, maxResults);
 
     return client.search(searchParams)
-        .then(function(res) {return res.hits.hits.map(function(x) {return x._source})})
-        .catch(function(err) {return Promise.resolve([])})
+        .then(res => res.hits.hits.map(x => x._source))
+        .catch(err => Promise.resolve([]))
 };
 
-exports.feedbackSearch = function (user_query, relevantDocuments, maxResults) {
-    var searchParams = queryWithUserString(user_query, maxResults);
+exports.feedbackSearch = (user_query, relevantDocuments, maxResults) => {
+    let searchParams = queryWithUserString(user_query, maxResults);
 
-    var length = relevantDocuments.length;
-    var length_key;
-    var length_ent;
-    var keywords = [];
-    var entities = [];
-    var keywords_temp = [];
-    var entities_temp = [];
-    for (var i = 0; i < length; i++) {
-        keywords_temp = relevantDocuments[i].keywords;
-        entities_temp = relevantDocuments[i].entities;
-        length_key = keywords_temp.length;
-        length_ent = entities_temp.length;
+    // comma separated
+    let keywords = relevantDocuments
+        .map(d => d.keywords)
+        .reduce((x, y) => x + y, [])
+        .join();
 
-        for (var a = 0; a < length_key; a++) {
-            if (!keywords.includes(keywords_temp[a])) {
-                keywords.push(keywords_temp[a]);
+    // as array
+    let entities = relevantDocuments
+        .map(d => d.entities)
+        .reduce((x, y) => x + y, []);
+
+    // as array
+    let sources = relevantDocuments
+        .map(d => d.source);
+
+    searchParams.body.query.bool.should = [
+        {
+            match: {
+                fullText: {
+                    query: keywords,
+                    boost: 1
+                },
+            }
+        },
+        {
+            terms: {
+                'entities.keyword': entities,
+                boost: 1
+            }
+        },
+        {
+            terms: {
+                'sources.keyword': sources,
+                boost: 1
             }
         }
-        for (var b = 0; b < length_ent; b++) {
-            if (!entities.includes(entities_temp[b])) {
-                entities.push(entities_temp[b]);
-            }
-        }
-    }
+    ];
 
-    length = keywords.length;
-    for (var i = 0; i < length; i++) {
-        searchParams.body.query.bool.should[0].match.fullText += (" " + keywords[i]);
-    }
-
-    client.search(searchParams, function (err, res) {
-        if (err) {
-            throw err;
-        }
-
-        console.log(res.hits.hits);
-    })
+    return client.search(searchParams)
+        .then(res => res.hits.hits.map(x => x._source))
+        .catch(err => Promise.resolve([]))
 };
 
-exports.connectionOk = function () {
-    return client.ping({requestTimeout: 30000})
-        .then(function () {
-            return Promise.resolve(true)
-        })
-        .catch(function (error) {
-            console.error(error);
-            return Promise.resolve(false)
-        });
-};
+exports.connectionOk = () => client.ping({requestTimeout: 30000})
+    .then(() => Promise.resolve(true))
+    .catch(error => {
+        console.error(error);
+        return Promise.resolve(false)
+    });
