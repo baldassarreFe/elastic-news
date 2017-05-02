@@ -13,10 +13,10 @@ function connectionErrorMessage() {
 }
 
 $('document').ready(function () {
-    connectionErrorMessage()
+    connectionErrorMessage();
 
     $('#search-form').bind('submit', function(event) {
-        event.preventDefault()
+        event.preventDefault();
         funcs.handleClick(event.target.query.value);
     });
 });

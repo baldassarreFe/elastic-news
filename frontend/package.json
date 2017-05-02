@@ -4,8 +4,8 @@
   "description": "",
   "main": "funcs.js",
   "scripts": {
-    "build": "browserify index.js funcs.js search.js -t babelify --debug -o bundle.js",
-    "watch": "watchify index.js funcs.js search.js -t babelify --debug -v -o bundle.js"
+    "build": "browserify js/*.js -t babelify --debug -o bundle.js",
+    "watch": "watchify js/*.js -t babelify --debug -v -o bundle.js"
   },
   "author": "",
   "license": "ISC",
