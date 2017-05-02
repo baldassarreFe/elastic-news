@@ -8,7 +8,7 @@ export function handleClick(queryTerm) {
     }
     else {
         search.search(queryTerm, new ElasticUser())
-            .then(results => replaceResults(results, $('#initial-results')));
+            .then(results => replaceResults(results, $('#results .row')));
     }
     return false;
 }
@@ -19,24 +19,16 @@ function replaceResults(results, resultBox) {
 }
 
 function createResultHtml(doc) {
-    let div = $(`<div>
-<a href="${doc.url}" target="_blanc"><h3>${doc.title}</h3></a>
+    let div = $(
+        `<div class="col-md-4">
+    <div class="card">
+      <div class="card-block">
+        <h4 class="card-title">${doc.title}</h4>
+        <h6 class="card-subtitle mb-2 text-muted">${doc.author}</h6>
+        <p class="card-text">${doc.description}</p>
+        <a href="${doc.url}" target="_blanc" class="card-link">Read on ${doc.source}</a>
+      </div>
+    </div>
 </div>`);
     return div;
-}
-
-export function buttonReinforcment(num) {
-    let id = "result_" + num.toString() + "_fb";
-    if (!document.getElementById(id).innerHTML) {
-        document.getElementById(id).innerHTML = num.toString();
-    }
-    else {
-        document.getElementById(id).innerHTML = "";
-    }
-
-}
-
-export function submitRL() {
-    alert("TODO: submitRL()");
-    // TODO: Submit all document.getElementById(result_X_fb).innerHTML where 1 <= X <= 10 to ElasticSearch
 }

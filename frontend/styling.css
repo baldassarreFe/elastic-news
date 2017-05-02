@@ -1,40 +1,40 @@
-.bg-header { 
-   background-color: #1abc9c; /* Green */
-   color: #ffffff;
+html {
+    position: relative;
+    min-height: 100%;
 }
-.bg-footer { 
-   background-color: #000000; /* Very dark gray */
-   color: #ffffff;
+
+body {
+    color: #000000;
+    background-color: #e9fcf8;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
 }
-.bg-body { 
-   background-color: #e9fcf8; /* Very light gray */
-   color: #000000;
-}
-.bg-results {
-   background-color: #ffffff; /* Very dark gray */
-   color: #8c8c8c;
-   padding-top: 20px;
-}
-.fixed-panel {
-  min-height: 300px;
-  max-height: 300px;
-  overflow-y: scroll;
-}
-.body1 { /* News icon */
-   padding-top: 50px;
-   margin: auto;
-}
-.body2 { /* Search field */
-   padding-top: 20px;
-   padding-bottom: 270px;
-   width: 350px;
-   margin: auto;
-}
-.header {
-   padding-top: 10px;
-   padding-bottom: 10px;
-}
+
 .footer {
-   padding-top: 30px;
-   padding-bottom: 10px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 40px;
+    line-height: 40px;
+    background-color: #272727;
+    color: #ffffff;
+}
+
+.header {
+    background-color: #1abc9c; /* Green */
+    color: #ffffff;
+}
+
+#search-bar {
+    padding: 10px 0;
+}
+
+#results {
+    color: #8c8c8c;
+    padding: 10px 0 0;
+}
+
+#results .card {
+    margin-bottom: 10px;
 }
