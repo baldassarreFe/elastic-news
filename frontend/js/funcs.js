@@ -1,16 +1,16 @@
 const search = require('./search');
 const $ = require('jquery');
+import {ElasticUser} from "./user";
 
-function handleClick(queryTerm) {
+export function handleClick(queryTerm) {
     if (queryTerm === "") {
         alert("Search for something...");
     }
     else {
-        let maxResults = 10;
-        search.simpleSearch(queryTerm, maxResults)
+        search.search(queryTerm, new ElasticUser())
             .then(results => replaceResults(results, $('#initial-results')));
     }
-    return false
+    return false;
 }
 
 function replaceResults(results, resultBox) {
@@ -25,7 +25,7 @@ function createResultHtml(doc) {
     return div;
 }
 
-function buttonReinforcment(num) {
+export function buttonReinforcment(num) {
     let id = "result_" + num.toString() + "_fb";
     if (!document.getElementById(id).innerHTML) {
         document.getElementById(id).innerHTML = num.toString();
@@ -36,12 +36,7 @@ function buttonReinforcment(num) {
 
 }
 
-function submitRL() {
+export function submitRL() {
     alert("TODO: submitRL()");
     // TODO: Submit all document.getElementById(result_X_fb).innerHTML where 1 <= X <= 10 to ElasticSearch
 }
-
-
-exports.handleClick = handleClick;
-exports.buttonReinforcment = buttonReinforcment;
-exports.submitRL = submitRL;

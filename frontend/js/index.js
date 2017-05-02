@@ -1,6 +1,6 @@
-var funcs = require('./funcs');
-var search = require('./search');
-var $ = require('jquery');
+const funcs = require('./funcs');
+const search = require('./search');
+const $ = require('jquery');
 
 function connectionErrorMessage() {
     search.connectionOk().then(function(ok) {

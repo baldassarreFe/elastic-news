@@ -1,12 +1,13 @@
-const elasticsearch = require('elasticsearch');
+import {Client} from "elasticsearch";
+import {elasticsearchUrl, maxResults, verbose} from "./settings";
 const Promise = require('promise');
 
-let client = new elasticsearch.Client({
-    host: 'http://localhost:9200',
+let client = new Client({
+    host: elasticsearchUrl,
     log: ['error', 'warning']
 });
 
-function queryWithUserString(user_query, maxResults) {
+function baseQuery(originalQuery) {
     return {
         index: 'news',
         type: 'article',
@@ -17,74 +18,152 @@ function queryWithUserString(user_query, maxResults) {
                     must: [
                         {
                             multi_match: {
-                                query: user_query,
+                                query: originalQuery,
                                 fields: ["fullText^1", "title^2"]
                             }
                         }
-                    ]
+                    ],
+                    should: []
                 }
             }
         }
     };
 }
 
-exports.simpleSearch = (user_query, maxResults) => {
-    let searchParams = queryWithUserString(user_query, maxResults);
+/**
+ * Creates queries like:
+ * <pre><code>
+ * {
+ *   "bool": {
+ *     "should": [
+ *       {
+ *         "match": {
+ *         "fullText": {
+ *           "query": "best restaurant in town",
+ *           "boost": 3
+ *         }
+ *       },
+ *       {
+ *         "terms": {
+ *           "entities.keyword": ["Pizza", "Pasta"],
+ *           "boost": 3
+ *         }
+ *       }
+ *     ],
+ *     "boost": 2
+ *   }
+ * }
+ * </pre></code>
+ * The inner boost value affect the weight of that query among
+ * the other queries in the should array.
+ *
+ * The outer boost instead is applied to the whole query and it
+ * is useful if the resulting query will be nested in e.g. an
+ * array of should queries
+ */
+function subquery(shouldClausesArray, subQueryBoost = 1) {
+    return {
+        bool: {
+            should: shouldClausesArray,
+            boost: subQueryBoost
+        }
+    }
+}
 
-    return client.search(searchParams)
-        .then(res => res.hits.hits.map(x => x._source))
-        .catch(err => Promise.resolve([]))
-};
-
-exports.feedbackSearch = (user_query, relevantDocuments, maxResults) => {
-    let searchParams = queryWithUserString(user_query, maxResults);
-
-    // comma separated
-    let keywords = relevantDocuments
-        .map(d => d.keywords)
-        .reduce((x, y) => x + y, [])
-        .join();
-
-    // as array
-    let entities = relevantDocuments
-        .map(d => d.entities)
-        .reduce((x, y) => x + y, []);
-
-    // as array
-    let sources = relevantDocuments
-        .map(d => d.source);
-
-    searchParams.body.query.bool.should = [
-        {
-            match: {
-                fullText: {
-                    query: keywords,
-                    boost: 1
-                },
-            }
-        },
-        {
-            terms: {
-                'entities.keyword': entities,
-                boost: 1
-            }
-        },
-        {
-            terms: {
-                'sources.keyword': sources,
-                boost: 1
+/**
+ * Creates queries like:
+ * <pre><code>
+ * {
+ *   "match": {
+ *     "fullText": {
+ *       "query": "best restaurant in town",
+ *       "boost": 3
+ *     }
+ *   }
+ * }
+ * </pre></code>
+ */
+function matchQuery(fieldName, queryString, boost = 1) {
+    return {
+        match: {
+            [fieldName]: {
+                query: queryString,
+                boost: boost
             }
         }
-    ];
+    }
+}
+
+/**
+ * Creates queries like:
+ * <pre><code>
+ * {
+ *   "terms": {
+ *     "entities.keyword": ["Pizza", "Pasta"],
+ *     "boost": 3
+ *   }
+ * }
+ * </pre></code>
+ */
+function termsQuery(fieldName, termsArray, boost = 1) {
+    return {
+        terms: {
+            [fieldName]: termsArray,
+            boost: boost
+        }
+    }
+}
+
+function queryBody(originalQuery, user) {
+    let q = baseQuery(originalQuery);
+
+    q.body.query.bool.should.push(
+        subquery(
+            user.keywords.slice(0, 10)
+                .map(kv => matchQuery('fullText', kv.value, kv.count)),
+            2
+        )
+    );
+
+    q.body.query.bool.should.push(
+        subquery(
+            user.entities.slice(0, 10)
+                .map(kv => termsQuery('entities.keywords', kv.value, kv.count)),
+            2
+        )
+    );
+
+    q.body.query.bool.should.push(
+        subquery(
+            user.sources.slice(0, 10)
+                .map(kv => termsQuery('sources.keywords', kv.value, kv.count)),
+            2
+        )
+    );
+
+    // TODO use authors from user.authors.slice(0, 10);
+
+    // TODO maybe use publishedAt
+    if (verbose) {
+        console.log(JSON.stringify(q.body, null, 2))
+    }
+
+    return q;
+}
+
+export function search(userQuery, user) {
+    let searchParams = queryBody(userQuery, user);
 
     return client.search(searchParams)
         .then(res => res.hits.hits.map(x => x._source))
         .catch(err => Promise.resolve([]))
-};
+}
 
-exports.connectionOk = () => client.ping({requestTimeout: 30000})
-    .then(() => Promise.resolve(true))
-    .catch(error => {
-        console.error(error);
-        return Promise.resolve(false)
-    });
+export function connectionOk() {
+    return client.ping({requestTimeout: 30000})
+        .then(() => Promise.resolve(true))
+        .catch(error => {
+            console.error(error);
+            return Promise.resolve(false)
+        });
+}
