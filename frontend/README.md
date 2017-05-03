@@ -17,3 +17,10 @@ Now just run one of:
 npm run build
 npm run watch
 ```
+
+And the run:
+'''
+python3 -m http.server
+'''
+
+Now just type http://127.0.0.1:8000/ in web browser
