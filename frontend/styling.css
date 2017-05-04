@@ -26,7 +26,7 @@ body {
     color: #ffffff;
 }
 
-.error-bar {
+#error-bar {
     background-color: red;
     color: whitesmoke;
 }

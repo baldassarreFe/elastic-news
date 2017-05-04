@@ -11,10 +11,9 @@ require('bootstrap');
 $('document').ready(function () {
     // Find elements with jQuery
     let searchForm = $('#search-bar').find('form');
-    let errorBar = $('.error-bar');
 
     // Handle connection issues
-    connectionErrorMessage(errorBar, searchForm);
+    connectionErrorMessage();
 
     // Hide big header when the search bar is activated
     searchForm.delegate(':input', 'focus', () => $('#header-img').collapse());
@@ -41,8 +40,10 @@ function fillBadge(kv, color) {
     return `<span class="badge badge-pill badge-${color}">${content}</span>`
 }
 
-function connectionErrorMessage(errorBar, searchForm) {
+function connectionErrorMessage() {
     search.connectionOk().then(ok => {
+        let searchForm = $('#search-bar').find('form');
+        let errorBar = $('#error-bar');
         errorBar.collapse(ok ? 'hide' : 'show');
         searchForm.find(':input').prop('disabled', !ok);
     });

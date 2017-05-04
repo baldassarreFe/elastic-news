@@ -28,8 +28,34 @@ Go to [http://localhost:5601](http://localhost:5601)
 **Cors**
 
 To allow the front end to directly invoke queries on Elasticsearch, add these lines
-to the configuration file ```config/elasticsearch.yml``` in the Elasticsearch folder.
+to the configuration file `config/elasticsearch.yml` in the Elasticsearch folder.
+
 ```yaml
 http.cors.enabled: true
 http.cors.allow-origin: "*"
 ```
+
+**Virtual memory settings for production use**
+
+In case we want to enable the elasticsearch server for production (it's needed
+to accept connections from outside localhost, e.g. testing from your phone) you
+can add one of these to `config/elasticsearch.yml`:
+
+- `network.host: ['<your ip address>', '_local_']`
+- `network.host: 0.0.0.0`
+
+(Check with `netstat -tuplen` that your ports are working)
+
+You might also need to check the virtual memory map settings to be at least 262144:
+
+```bash
+cat /proc/sys/vm/max_map_count
+```
+
+In case it's not, you can change it until the next reboot:
+
+```bash
+sudo sysctl -w vm.max_map_count=262144
+```
+
+or permanently by adding the line `vm.max_map_count=262144` to `/etc/sysctl.conf`.

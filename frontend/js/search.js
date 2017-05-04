@@ -1,9 +1,9 @@
 import {Client} from "elasticsearch";
-import {elasticsearchUrl, maxResults, verbose} from "./settings";
+import {elasticsearchUrls, maxResults, verbose} from "./settings";
 const Promise = require('promise');
 
 let client = new Client({
-    host: elasticsearchUrl,
+    host: elasticsearchUrls,
     log: ['error', 'warning']
 });
 
