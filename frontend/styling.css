@@ -26,15 +26,42 @@ body {
     color: #ffffff;
 }
 
+.error-bar {
+    background-color: red;
+    color: whitesmoke;
+}
+
 #search-bar {
-    padding: 10px 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 #results {
-    color: #8c8c8c;
     padding: 10px 0 0;
 }
 
-#results .card {
+.card {
     margin-bottom: 10px;
+}
+
+#user-info {
+    background-color: white;
+    border-top: thin solid #8c8c8c;
+    border-bottom: thin solid #8c8c8c;
+}
+
+.card-img-top {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.card-title {
+    color: #272727;
+}
+
+.card-text {
+    color: #8c8c8c;
+    font-size: small;
+    line-height: normal;
 }

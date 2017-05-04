@@ -114,6 +114,30 @@ function termsQuery(fieldName, termsArray, boost = 1) {
     }
 }
 
+/**
+ * Creates queries like:
+ * <pre><code>
+ * {
+ *   "term": {
+ *     "entities.keyword": {
+ *       "value": "Pizza",
+ *       "boost": 3
+ *     }
+ *   }
+ * }
+ * </pre></code>
+ */
+function termQuery(fieldName, term, boost = 1) {
+    return {
+        term: {
+            [fieldName]: {
+                value: term,
+                boost: boost
+            }
+        }
+    }
+}
+
 function queryBody(originalQuery, user) {
     let q = baseQuery(originalQuery);
 
@@ -128,7 +152,7 @@ function queryBody(originalQuery, user) {
     q.body.query.bool.should.push(
         subquery(
             user.entities.slice(0, 10)
-                .map(kv => termsQuery('entities.keywords', kv.value, kv.count)),
+                .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
             2
         )
     );
@@ -136,7 +160,7 @@ function queryBody(originalQuery, user) {
     q.body.query.bool.should.push(
         subquery(
             user.sources.slice(0, 10)
-                .map(kv => termsQuery('sources.keywords', kv.value, kv.count)),
+                .map(kv => termQuery('sources.keywords', kv.value, kv.count)),
             2
         )
     );
