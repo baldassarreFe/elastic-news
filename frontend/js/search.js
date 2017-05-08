@@ -152,6 +152,20 @@ function termQuery(fieldName, term, boost = 1) {
     }
 }
 
+
+
+function rangeQuery(fieldName, term, boost = 1) {
+    return {
+        range: {
+            [fieldName]: {
+                "gte": term + "-1d/d",
+                "lt": term + "/d",
+                boost: boost
+            }
+        }
+    }
+}
+
 function queryBody(originalQuery, user) {
     let q = baseQuery(originalQuery);
 
@@ -187,11 +201,14 @@ function queryBody(originalQuery, user) {
         )
     );
 
-    
+    q.body.query.function_score.query.bool.should.push(
+        subquery(
+            user.publishedDates.slice(0, 10)
+                .map(kv => rangeQuery('publishedDates.keywords', kv.value, kv.count)),
+            1
+        )
+    );
 
-    // TODO use authors from user.authors.slice(0, 10);
-
-    // TODO maybe use publishedAt
     if (verbose) {
         console.log(JSON.stringify(q.body, null, 2))
     }
@@ -203,7 +220,8 @@ export function search(userQuery, user) {
     let searchParams = queryBody(userQuery, user);
 
     return client.search(searchParams)
-        .then(res => res.hits.hits.map(x => x._source))
+        .then(res => res.hits.hits.map(
+            x => Object.assign(x._source, {score: x._score})))
         .catch(err => Promise.resolve([]))
 }
 

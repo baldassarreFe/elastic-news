@@ -12,6 +12,8 @@ $('document').ready(function () {
     // Find elements with jQuery
     let searchForm = $('#search-bar').find('form');
 
+    let clearHistoryBtn = $('#clear-history-btn');
+
     // Handle connection issues
     connectionErrorMessage();
 
@@ -24,6 +26,11 @@ $('document').ready(function () {
         funcs.handleClick(event.target.query.value);
     });
 
+    clearHistoryBtn.bind('click', event => {
+        console.log("Clear history btn clicked.");
+        UserService.user.clear();
+    })
+
     // Bind user to user details view
     UserService.user.addListener(showUserDetails)
 });
@@ -33,6 +40,7 @@ function showUserDetails(user) {
     $('#entities-list').html(user.entities.slice(0, 10).map(kv => fillBadge(kv, 'info')).join(' '));
     $('#sources-list').html(user.sources.slice(0, 10).map(kv => fillBadge(kv, 'warning')).join(' '));
     $('#authors-list').html(user.authors.slice(0, 10).map(kv => fillBadge(kv, 'primary')).join(' '));
+    $('#publishedDates-list').html(user.publishedDates.slice(0, 10).map(kv => fillBadge(kv, 'warning')).join(' '));
 }
 
 function fillBadge(kv, color) {

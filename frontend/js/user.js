@@ -4,6 +4,7 @@ export class ElasticUser {
         this.entities = [];
         this.authors = [];
         this.sources = [];
+        this.publishedDates = [];
         this.listeners = [];
         if (otherUser)
             Object.assign(this, otherUser);
@@ -18,11 +19,20 @@ export class ElasticUser {
         this.listeners.forEach(c => c(this));
     }
 
+    clear() {
+        this.keywords = [];
+        this.entities = [];
+        this.authors = [];
+        this.sources = [];
+        this.notifyListeners();
+    }
+
     addDoc(doc) {
         addToList(this.keywords, doc.keywords);
         addToList(this.entities, doc.entities);
         addToList(this.authors, [doc.author]);
         addToList(this.sources, [doc.source]);
+        addToList(this.publishedDates, [doc.publishedAt.substring(0,10)]);
         this.notifyListeners();
     }
 
@@ -31,7 +41,8 @@ export class ElasticUser {
             keywords: this.keywords,
             entities: this.entities,
             authors: this.authors,
-            sources: this.sources
+            sources: this.sources,
+            publishedDates: this.publishedDates
         }
     }
 }
@@ -48,5 +59,5 @@ function addToList(keyValueList, otherList) {
             })
         }
     });
-    keyValueList.sort((a, b) => b.value - a.value)
+    keyValueList.sort((a, b) => b.count - a.count);
 }
