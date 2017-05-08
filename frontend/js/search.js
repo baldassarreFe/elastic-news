@@ -13,17 +13,31 @@ function baseQuery(originalQuery) {
         type: 'article',
         body: {
             size: maxResults,
-            query: {
-                bool: {
-                    must: [
-                        {
-                            multi_match: {
-                                query: originalQuery,
-                                fields: ["fullText^1", "title^2"]
+            query:{
+                function_score:{
+                    query: {
+                        bool: {
+                            must: [
+                                {
+                                    multi_match: {
+                                        query: originalQuery,
+                                        fields: ["fullText^1", "title^2"]
+                                    }
+                                }
+                            ],
+                            should: []
+                        }
+                    },
+                    functions: [
+                     {
+                        exp:{
+                            publishedAt:{
+                                offset: 0,
+                                scale: "1d"
                             }
                         }
-                    ],
-                    should: []
+                     }
+                    ]
                 }
             }
         }
@@ -141,7 +155,7 @@ function termQuery(fieldName, term, boost = 1) {
 function queryBody(originalQuery, user) {
     let q = baseQuery(originalQuery);
 
-    q.body.query.bool.should.push(
+    q.body.query.function_score.query.bool.should.push(
         subquery(
             user.keywords.slice(0, 10)
                 .map(kv => matchQuery('fullText', kv.value, kv.count)),
@@ -149,7 +163,7 @@ function queryBody(originalQuery, user) {
         )
     );
 
-    q.body.query.bool.should.push(
+    q.body.query.function_score.query.bool.should.push(
         subquery(
             user.entities.slice(0, 10)
                 .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
@@ -157,13 +171,23 @@ function queryBody(originalQuery, user) {
         )
     );
 
-    q.body.query.bool.should.push(
+    q.body.query.function_score.query.bool.should.push(
         subquery(
             user.sources.slice(0, 10)
                 .map(kv => termQuery('sources.keywords', kv.value, kv.count)),
             2
         )
     );
+
+    q.body.query.function_score.query.bool.should.push(
+        subquery(
+            user.authors.slice(0, 10)
+                .map(kv => termQuery('author.keyword', kv.value, kv.count)),
+            2
+        )
+    );
+
+    
 
     // TODO use authors from user.authors.slice(0, 10);
 
