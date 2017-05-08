@@ -138,42 +138,59 @@ function termQuery(fieldName, term, boost = 1) {
     }
 }
 
+
+function rangeQuery(fieldName, term, boost = 1) {
+    return {
+        range: {
+            [fieldName]: {
+                "gte": term + "-1d/d",
+                "lt": term + "/d",
+                boost: boost
+            }
+        }
+    }
+}
+
 function queryBody(originalQuery, user) {
     let q = baseQuery(originalQuery);
 
     if (user) {
-        q.body.query.bool.should.push(
-            subquery(
-                user.keywords.slice(0, 10)
-                    .map(kv => matchQuery('fullText', kv.value, kv.count)),
-                2
-            )
-        );
+        q.body.query.bool.should.push(subquery(
+            user.keywords.slice(0, 10)
+                .map(kv => matchQuery('fullText', kv.value, kv.count)),
+            2
+        ));
 
-        q.body.query.bool.should.push(
-            subquery(
-                user.entities.slice(0, 10)
-                    .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
-                2
-            )
-        );
+        q.body.query.bool.should.push(subquery(
+            user.entities.slice(0, 10)
+                .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
+            2
+        ));
 
-        q.body.query.bool.should.push(
-            subquery(
-                user.sources.slice(0, 10)
-                    .map(kv => termQuery('sources.keywords', kv.value, kv.count)),
-                2
-            )
-        );
+        q.body.query.bool.should.push(subquery(
+            user.sources.slice(0, 10)
+                .map(kv => termQuery('sources.keywords', kv.value, kv.count)),
+            2
+        ));
 
-        // TODO use authors from user.authors.slice(0, 10);
+        q.body.query.bool.should.push(subquery(
+            user.authors.slice(0, 10)
+                .map(kv => termQuery('authors.keywords', kv.value, kv.count)),
+            2
+        ));
 
-        // TODO maybe use publishedAt
+        q.body.query.bool.should.push(subquery(
+            user.publishedDates.slice(0, 10)
+                .map(kv => rangeQuery('publishedDates.keywords', kv.value, kv.count)),
+            1
+        ));
+
+        if (verbose) {
+            console.log(JSON.stringify(q.body, null, 2))
+        }
+
+
     }
-    if (verbose) {
-        console.log(JSON.stringify(q.body, null, 2))
-    }
-
     return q;
 }
 
