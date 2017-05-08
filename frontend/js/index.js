@@ -50,7 +50,7 @@ function showUserDetails(user) {
 
 function fillBadge(kv, color, type) {
     let content = kv.value + (kv.count > 1 ? (' | ' + kv.count) : '');
-    return $(`<button class="badge badge-pill badge-${color}">${content}</button>`).click(() =>
+    return $(`<span role="button" class="badge badge-pill badge-${color}">${content}</span>`).click(() =>
       UserService.user.downVote(kv.value, type)
     );
 
