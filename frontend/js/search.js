@@ -27,17 +27,17 @@ function baseQuery(originalQuery) {
                             ],
                             should: []
                         }
-                    },
-                    functions: [
-                        {
-                            exp: {
-                                publishedAt: {
-                                    offset: 0,
-                                    scale: "1d"
-                                }
-                            }
-                        }
-                    ]
+                    }//,
+                    // functions: [
+                    //     {
+                    //         exp: {
+                    //             publishedAt: {
+                    //                 offset: 0,
+                    //                 scale: "1d"
+                    //             }
+                    //         }
+                    //     }
+                    // ]
                 }
             }
         }
@@ -191,18 +191,18 @@ function queryBody(originalQuery, user) {
         ));
 
 
-        /*q.body.query.function_score.query.bool.should.push(subquery(
+        q.body.query.function_score.query.bool.should.push(subquery(
             user.authors.slice(0, 10)
                 .map(kv => termQuery('author.keyword', kv.value, kv.count)),
             2
-        ));*/
+        ));
 
 
-        /*q.body.query.function_score.query.bool.should.push(subquery(
+        q.body.query.function_score.query.bool.should.push(subquery(
             user.publishedDates.slice(0, 10)
                 .map(kv => rangeQuery('publishedDates.keywords', kv.value, kv.count)),
             1
-        ));*/
+        ));
     }
     if (verbose) {
         console.log(JSON.stringify(q.body, null, 2))

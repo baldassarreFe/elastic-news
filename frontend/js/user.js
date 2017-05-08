@@ -24,6 +24,7 @@ export class ElasticUser {
         this.entities = [];
         this.authors = [];
         this.sources = [];
+        this.publishedDates = [];
         this.notifyListeners();
     }
 
@@ -32,7 +33,7 @@ export class ElasticUser {
         addToList(this.entities, doc.entities);
         addToList(this.authors, [doc.author]);
         addToList(this.sources, [doc.source]);
-        //addToList(this.publishedDates, [doc.publishedAt.substring(0,10)]);
+        addToList(this.publishedDates, [doc.publishedAt.substring(0,10)]);
         this.notifyListeners();
     }
 
