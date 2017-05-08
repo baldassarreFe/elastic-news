@@ -18,6 +18,14 @@ export class ElasticUser {
         this.listeners.forEach(c => c(this));
     }
 
+    clear() {
+        this.keywords = [];
+        this.entities = [];
+        this.authors = [];
+        this.sources = [];
+        this.notifyListeners();
+    }
+
     addDoc(doc) {
         addToList(this.keywords, doc.keywords);
         addToList(this.entities, doc.entities);
@@ -48,5 +56,5 @@ function addToList(keyValueList, otherList) {
             })
         }
     });
-    keyValueList.sort((a, b) => b.value - a.value)
+    keyValueList.sort((a, b) => b.count - a.count);
 }
