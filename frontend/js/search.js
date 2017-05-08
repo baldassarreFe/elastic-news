@@ -179,7 +179,8 @@ export function search(userQuery, user) {
     let searchParams = queryBody(userQuery, user);
 
     return client.search(searchParams)
-        .then(res => res.hits.hits.map(x => x._source))
+        .then(res => res.hits.hits.map(
+            x => Object.assign(x._source, {score: x._score})))
         .catch(err => Promise.resolve([]))
 }
 
