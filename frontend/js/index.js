@@ -33,6 +33,7 @@ function showUserDetails(user) {
     $('#entities-list').html(user.entities.slice(0, 10).map(kv => fillBadge(kv, 'info')).join(' '));
     $('#sources-list').html(user.sources.slice(0, 10).map(kv => fillBadge(kv, 'warning')).join(' '));
     $('#authors-list').html(user.authors.slice(0, 10).map(kv => fillBadge(kv, 'primary')).join(' '));
+    $('#publishedDates-list').html(user.publishedDates.slice(0, 10).map(kv => fillBadge(kv, 'warning')).join(' '));
 }
 
 function fillBadge(kv, color) {
