@@ -141,33 +141,35 @@ function termQuery(fieldName, term, boost = 1) {
 function queryBody(originalQuery, user) {
     let q = baseQuery(originalQuery);
 
-    q.body.query.bool.should.push(
-        subquery(
-            user.keywords.slice(0, 10)
-                .map(kv => matchQuery('fullText', kv.value, kv.count)),
-            2
-        )
-    );
+    if (user) {
+        q.body.query.bool.should.push(
+            subquery(
+                user.keywords.slice(0, 10)
+                    .map(kv => matchQuery('fullText', kv.value, kv.count)),
+                2
+            )
+        );
 
-    q.body.query.bool.should.push(
-        subquery(
-            user.entities.slice(0, 10)
-                .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
-            2
-        )
-    );
+        q.body.query.bool.should.push(
+            subquery(
+                user.entities.slice(0, 10)
+                    .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
+                2
+            )
+        );
 
-    q.body.query.bool.should.push(
-        subquery(
-            user.sources.slice(0, 10)
-                .map(kv => termQuery('sources.keywords', kv.value, kv.count)),
-            2
-        )
-    );
+        q.body.query.bool.should.push(
+            subquery(
+                user.sources.slice(0, 10)
+                    .map(kv => termQuery('sources.keywords', kv.value, kv.count)),
+                2
+            )
+        );
 
-    // TODO use authors from user.authors.slice(0, 10);
+        // TODO use authors from user.authors.slice(0, 10);
 
-    // TODO maybe use publishedAt
+        // TODO maybe use publishedAt
+    }
     if (verbose) {
         console.log(JSON.stringify(q.body, null, 2))
     }
