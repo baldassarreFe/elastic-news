@@ -7,7 +7,9 @@ import {UserService} from "./user.service";
 export function handleClick(queryTerm) {
     if (queryTerm)
         search.search(queryTerm, UserService.user)
-            .then(results => replaceResults(results, $('#results').find('.row')));
+            .then(results => replaceResults(results, $('#results').find('.with-history')));
+    search.search(queryTerm, null)
+        .then(results => replaceResults(results, $('#results').find('.neutral')));
     return false;
 }
 
@@ -18,7 +20,7 @@ function replaceResults(results, resultBox) {
 
 function createResultHtml(doc) {
     let div = $(
-        `<div class="col-md-3">
+        `<div class="col-md-6">
     <div class="card">
       ${createCardImage(doc)}
       <div class="card-block">

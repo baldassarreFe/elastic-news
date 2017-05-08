@@ -13,8 +13,8 @@ function baseQuery(originalQuery) {
         type: 'article',
         body: {
             size: maxResults,
-            query:{
-                function_score:{
+            query: {
+                function_score: {
                     query: {
                         bool: {
                             must: [
@@ -29,14 +29,14 @@ function baseQuery(originalQuery) {
                         }
                     },
                     functions: [
-                     {
-                        exp:{
-                            publishedAt:{
-                                offset: 0,
-                                scale: "1d"
+                        {
+                            exp: {
+                                publishedAt: {
+                                    offset: 0,
+                                    scale: "1d"
+                                }
                             }
                         }
-                     }
                     ]
                 }
             }
@@ -153,7 +153,6 @@ function termQuery(fieldName, term, boost = 1) {
 }
 
 
-
 function rangeQuery(fieldName, term, boost = 1) {
     return {
         range: {
@@ -169,50 +168,45 @@ function rangeQuery(fieldName, term, boost = 1) {
 function queryBody(originalQuery, user) {
     let q = baseQuery(originalQuery);
 
-    q.body.query.function_score.query.bool.should.push(
-        subquery(
+    if (user) {
+
+        q.body.query.function_score.query.bool.should.push(subquery(
             user.keywords.slice(0, 10)
                 .map(kv => matchQuery('fullText', kv.value, kv.count)),
             2
-        )
-    );
+        ));
 
-    q.body.query.function_score.query.bool.should.push(
-        subquery(
+
+        q.body.query.function_score.query.bool.should.push(subquery(
             user.entities.slice(0, 10)
                 .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
             2
-        )
-    );
+        ));
 
-    q.body.query.function_score.query.bool.should.push(
-        subquery(
+
+        q.body.query.function_score.query.bool.should.push(subquery(
             user.sources.slice(0, 10)
                 .map(kv => termQuery('sources.keywords', kv.value, kv.count)),
             2
-        )
-    );
+        ));
 
-    q.body.query.function_score.query.bool.should.push(
-        subquery(
+
+        q.body.query.function_score.query.bool.should.push(subquery(
             user.authors.slice(0, 10)
                 .map(kv => termQuery('author.keyword', kv.value, kv.count)),
             2
-        )
-    );
+        ));
 
-    q.body.query.function_score.query.bool.should.push(
-        subquery(
+
+        q.body.query.function_score.query.bool.should.push(subquery(
             user.publishedDates.slice(0, 10)
                 .map(kv => rangeQuery('publishedDates.keywords', kv.value, kv.count)),
             1
-        )
-    );
-
+        ));
+    }
     if (verbose) {
         console.log(JSON.stringify(q.body, null, 2))
     }
-
     return q;
 }
 
