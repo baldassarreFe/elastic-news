@@ -12,6 +12,7 @@
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.6",
     "elasticsearch": "^13.0.0",
+    "moment": "^2.18.1",
     "promise": "^7.1.1",
     "tether": "^1.4.0"
   },

@@ -1,5 +1,6 @@
 const search = require('./search');
 const $ = require('jquery');
+const moment = require('moment');
 import {verbose} from "./settings";
 import {UserService} from "./user.service";
 
@@ -24,6 +25,7 @@ function createResultHtml(doc) {
         <h5 class="card-title">${doc.title}</h5>
         <h6 class="card-subtitle mb-2 text-muted">${doc.author}</h6>
         <p class="card-text">${doc.description}</p>
+        <p class="card-text pull-right"><small class="text-muted">${moment(doc.publishedAt).format('Do MMM YY')}</small></p>
       </div>
       <div class="card-footer">
         <a href="${doc.url}" target="_blanc" class="btn btn-sm btn-link doc-feedback"><span class="fa fa-external-link"></span> ${doc.source}</a>
