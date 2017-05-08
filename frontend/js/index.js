@@ -36,16 +36,24 @@ $('document').ready(function () {
 });
 
 function showUserDetails(user) {
-    $('#keywords-list').html(user.keywords.slice(0, 10).map(kv => fillBadge(kv, 'success')).join(' '));
-    $('#entities-list').html(user.entities.slice(0, 10).map(kv => fillBadge(kv, 'info')).join(' '));
-    $('#sources-list').html(user.sources.slice(0, 10).map(kv => fillBadge(kv, 'warning')).join(' '));
-    $('#authors-list').html(user.authors.slice(0, 10).map(kv => fillBadge(kv, 'primary')).join(' '));
-    $('#publishedDates-list').html(user.publishedDates.slice(0, 10).map(kv => fillBadge(kv, 'warning')).join(' '));
+    $('#keywords-list').html('');
+    $('#entities-list').html('');
+    $('#sources-list').html('');
+    $('#authors-list').html('');
+    $('#publishedDates-list').html('');
+    $('#keywords-list').append(user.keywords.slice(0, 10).map(kv => fillBadge(kv, 'success', user.keywords)));
+    $('#entities-list').append(user.entities.slice(0, 10).map(kv => fillBadge(kv, 'info', user.entities)));
+    $('#sources-list').append(user.sources.slice(0, 10).map(kv => fillBadge(kv, 'warning', user.sources)));
+    $('#authors-list').append(user.authors.slice(0, 10).map(kv => fillBadge(kv, 'primary', user.authors)));
+    $('#publishedDates-list').append(user.publishedDates.slice(0, 10).map(kv => fillBadge(kv, 'warning', user.publishedDates)));
 }
 
-function fillBadge(kv, color) {
+function fillBadge(kv, color, type) {
     let content = kv.value + (kv.count > 1 ? (' | ' + kv.count) : '');
-    return `<span class="badge badge-pill badge-${color}">${content}</span>`
+    return $(`<button class="badge badge-pill badge-${color}">${content}</button>`).click(() =>
+      UserService.user.downVote(kv.value, type)
+    );
+
 }
 
 function connectionErrorMessage() {

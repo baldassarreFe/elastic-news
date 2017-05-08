@@ -46,6 +46,21 @@ export class ElasticUser {
             publishedDates: this.publishedDates
         }
     }
+
+    downVote(value, keyValueList) {
+        let kv = keyValueList.find(kv => kv.value === value);
+        // if (kv.count > 1) {
+        //   kv.count--;
+        // } else {
+        var index = keyValueList.indexOf(kv);
+        if (index > -1) {
+          keyValueList.splice(index, 1);
+        }
+        // }
+        keyValueList.sort((a, b) => b.count - a.count);
+        this.notifyListeners();
+    }
+
 }
 
 function addToList(keyValueList, otherList) {
