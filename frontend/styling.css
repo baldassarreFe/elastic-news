@@ -65,3 +65,36 @@ body {
     font-size: small;
     line-height: normal;
 }
+
+.img-container {
+    position: relative;
+}
+
+.score-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    opacity: 0.8;
+    transition: .5s ease;
+    background-color: #4f4f4f;
+}
+
+.img-container:hover .score-overlay {
+    opacity: 0.2;
+}
+
+.score-overlay .score-box {
+    color: black;
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: whitesmoke;
+    padding: 3px;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+}
