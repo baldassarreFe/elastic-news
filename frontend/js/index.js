@@ -12,6 +12,8 @@ $('document').ready(function () {
     // Find elements with jQuery
     let searchForm = $('#search-bar').find('form');
 
+    let clearHistoryBtn = $('#clear-history-btn');
+
     // Handle connection issues
     connectionErrorMessage();
 
@@ -23,6 +25,11 @@ $('document').ready(function () {
         event.preventDefault();
         funcs.handleClick(event.target.query.value);
     });
+
+    clearHistoryBtn.bind('click', event => {
+        console.log("Clear history btn clicked.");
+        UserService.user.clear();
+    })
 
     // Bind user to user details view
     UserService.user.addListener(showUserDetails)
