@@ -48,5 +48,5 @@ function addToList(keyValueList, otherList) {
             })
         }
     });
-    keyValueList.sort((a, b) => b.value - a.value)
+    keyValueList.sort((a, b) => b.count - a.count);
 }
