@@ -31,9 +31,15 @@ export class ElasticUser {
     addDoc(doc) {
         addToList(this.keywords, doc.keywords);
         addToList(this.entities, doc.entities);
-        addToList(this.authors, [doc.author]);
+        if(doc.author)
+        {
+            addToList(this.authors, [doc.author]);
+        }
         addToList(this.sources, [doc.source]);
-        addToList(this.publishedDates, [doc.publishedAt.substring(0,10)]);
+        if(doc.publishedAt)
+        {
+            addToList(this.publishedDates, [doc.publishedAt.substring(0,10)]);
+        }
         this.notifyListeners();
     }
 
