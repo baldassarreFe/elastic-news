@@ -1,19 +1,9 @@
-const search = require('./search');
 const $ = require('jquery');
 const moment = require('moment');
 import {verbose} from "./settings";
 import {UserService} from "./user.service";
 
-export function handleClick(queryTerm) {
-    if (queryTerm)
-        search.search(queryTerm, UserService.user)
-            .then(results => replaceResults(results, $('#results').find('.with-history')));
-    search.search(queryTerm, null)
-        .then(results => replaceResults(results, $('#results').find('.neutral')));
-    return false;
-}
-
-function replaceResults(results, resultBox) {
+export function replaceResults(results, resultBox) {
     resultBox.empty();
     resultBox.append(results.map(createResultHtml))
 }

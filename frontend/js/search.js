@@ -8,7 +8,7 @@ let client = new Client({
 });
 
 function baseQuery(originalQuery) {
-    return {
+    let res = {
         index: 'news',
         type: 'article',
         body: {
@@ -17,14 +17,7 @@ function baseQuery(originalQuery) {
                 function_score: {
                     query: {
                         bool: {
-                            must: [
-                                {
-                                    multi_match: {
-                                        query: originalQuery,
-                                        fields: ["fullText^1", "title^2"]
-                                    }
-                                }
-                            ],
+                            must: [],
                             should: []
                         }
                     }//,
@@ -42,6 +35,15 @@ function baseQuery(originalQuery) {
             }
         }
     };
+    if (originalQuery){
+        res.body.query.function_score.query.bool.must.push({
+            multi_match: {
+                query: originalQuery,
+                fields: ["fullText^1", "title^2"]
+            }
+        });
+    }
+    return res;
 }
 
 /**
