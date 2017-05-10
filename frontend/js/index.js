@@ -76,13 +76,13 @@ function connectionErrorMessage() {
 
 function handleClick(queryTerm) {
     if (queryTerm)
-        search.search(queryTerm, settings.shouldUseHistory ? UserService.user : null)
+        search.search(queryTerm, settings.shouldUseHistory ? UserService.user : null, settings.searchResults)
             .then(results => replaceResults(results, $('#results').find('.neutral')));
     return false;
 }
 
 function pullUpRecommendations() {
-    search.search(null, UserService.user)
+    search.search(null, UserService.user, settings.recommendations)
         .then(results => replaceResults(results, $('#results').find('.recommended')));
     setTimeout(pullUpRecommendations, 5000)
 }

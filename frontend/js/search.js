@@ -7,12 +7,12 @@ let client = new Client({
     log: ['error', 'warning']
 });
 
-function baseQuery(originalQuery) {
+function baseQuery(originalQuery, searchResults) {
     let res = {
         index: 'news',
         type: 'article',
         body: {
-            size: settings.maxResults,
+            size: searchResults,
             query: {
                 function_score: {
                     query: {
@@ -162,8 +162,8 @@ function rangeQuery(fieldName, term, boost = 1) {
     }
 }
 
-function queryBody(originalQuery, user) {
-    let q = baseQuery(originalQuery);
+function queryBody(originalQuery, user, searchResults) {
+    let q = baseQuery(originalQuery, searchResults);
 
     if (user) {
 
@@ -207,8 +207,8 @@ function queryBody(originalQuery, user) {
     return q;
 }
 
-export function search(userQuery, user) {
-    let searchParams = queryBody(userQuery, user);
+export function search(userQuery, user, searchResults) {
+    let searchParams = queryBody(userQuery, user, searchResults);
 
     return client.search(searchParams)
         .then(res => res.hits.hits.map(

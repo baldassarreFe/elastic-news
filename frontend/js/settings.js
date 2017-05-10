@@ -1,7 +1,8 @@
 export let settings = {
-    maxResults: 10,
+    searchResults: 30,
+    recommendations: 5,
     verbose: true,
-    shouldUseHistory: true
+    shouldUseHistory: false
 };
 
 // Elasticsearch urls to try:
