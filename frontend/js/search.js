@@ -27,17 +27,12 @@ function baseQuery(originalQuery) {
                             ],
                             should: []
                         }
-                    }//,
-                    // functions: [
-                    //     {
-                    //         exp: {
-                    //             publishedAt: {
-                    //                 offset: 0,
-                    //                 scale: "1d"
-                    //             }
-                    //         }
-                    //     }
-                    // ]
+                    },
+                    field_value_factor: {
+                        field: "publishedAt",
+                        modifier: "sqrt",
+                        missing: 1483225200000 //2017-01-01 00:00:00
+                    }                       
                 }
             }
         }
