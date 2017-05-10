@@ -1,5 +1,5 @@
 export let settings = {
-    searchResults: 30,
+    searchResults: 50,
     recommendations: 5,
     verbose: true,
     shouldUseHistory: false
