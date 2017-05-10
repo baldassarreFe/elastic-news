@@ -11,7 +11,7 @@ class NewsAPI():
         dotenv_path = join(dirname(__file__), '.env')
         load_dotenv(dotenv_path)
         self.key = os.environ.get("APIKEY")
-        self.news_sources = ["reuters", "cnn", "the-guardian-uk", "the-new-york-times", "bbc-news", "daily-mail", "the-economist", "business-insider", "independent", "fortune", "time", "bbc-sport", "ign", "national-geographic"]
+        self.news_sources = ["reuters", "cnn", "the-guardian-uk", "the-new-york-times", "bbc-news", "daily-mail", "the-economist", "business-insider", "independent", "fortune", "time", "bbc-sport", "ign", "national-geographic", "entertainment-weekly", "espn", "espn-cric-info", "mtv-news", "new-scientist", "polygon", "techcrunch", "the-sport-bible"]
         self.base_URI = "https://newsapi.org/v1/articles?"
 
     def getnews(self):

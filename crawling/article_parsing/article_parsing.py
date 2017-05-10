@@ -124,6 +124,54 @@ def national_geographic_parser(article_metadata, article_soup):
     else:
         return None
 
+def entertainment_weekly_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"class": "article-body"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"class": "article-body"}).select("p")])}
+    else:
+        return None
+
+def espn_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"class": "article-body"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"class": "article-body"}).select("p")])}
+    else:
+        return None
+
+def espn_cric_info_parser(article_metadata, article_soup):
+    if article_soup.find("section", {"class": "col-1-1 story-content-main"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("section", {"class": "col-1-1 story-content-main"}).select("p")])}
+    else:
+        return None
+
+def mtv_news_parser(article_metadata, article_soup):
+    if article_soup.find("section", {"class": "entry-content"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("section", {"class": "entry-content"}).select("p")])}
+    else:
+        return None
+
+def new_scientist_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"class": "article-content"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"class": "article-content"}).select("p")])}
+    else:
+        return None
+
+def polygon_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"class": "c-entry-content"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"class": "c-entry-content"}).select("p")])}
+    else:
+        return None
+
+def techcrunch_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"class": "article-entry text"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"class": "article-entry text"}).select("p")])}
+    else:
+        return None
+
+def the_sport_bible_parser(article_metadata, article_soup):
+    if article_soup.find("div", {"data-meta": "content"}):
+        return {**article_metadata,'fullText': ''.join([p.get_text() for p in article_soup.find("div", {"data-meta": "content"}).select("p")])}
+    else:
+        return None
+
 def all_parsers():
     return {
         "reuters": reuters_parser,
@@ -139,7 +187,15 @@ def all_parsers():
         "time": time_parser,
         "bbc-sport": bbc_sport_parser,
         "ign": ign_parser,
-        "national-geographic": national_geographic_parser
+        "national-geographic": national_geographic_parser,
+        "entertainment-weekly": entertainment_weekly_parser,
+        "espn": espn_parser,
+        "espn-cric-info": espn_cric_info_parser,
+        "mtv-news": mtv_news_parser,
+        "new-scientist": new_scientist_parser,
+        "polygon": polygon_parser,
+        "techcrunch": techcrunch_parser,
+        "the-sport-bible": the_sport_bible_parser
     }
 
 
