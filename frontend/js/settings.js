@@ -1,5 +1,8 @@
-export let maxResults = 10;
-export let verbose = true;
+export let settings = {
+    maxResults: 10,
+    verbose: true,
+    shouldUseHistory: true
+};
 
 // Elasticsearch urls to try:
 export let elasticsearchUrls = ['http://localhost:9200'];

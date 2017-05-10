@@ -1,6 +1,6 @@
 const $ = require('jquery');
 const moment = require('moment');
-import {verbose} from "./settings";
+import {settings} from "./settings";
 import {UserService} from "./user.service";
 
 export function replaceResults(results, resultBox) {
@@ -30,7 +30,7 @@ function createResultHtml(doc) {
 }
 
 function createCardImage(doc) {
-    if (verbose)
+    if (settings.verbose)
         return `
         <div class="img-container">
             <img class="card-img-top" src="${doc.urlToImage}" alt="Card image cap">

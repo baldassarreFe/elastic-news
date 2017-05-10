@@ -2,6 +2,7 @@ const $ = require('jquery');
 global.$ = $;
 global.jQuery = $;
 import tether from "tether";
+import {settings} from "./settings";
 global.Tether = tether;
 require('bootstrap');
 
@@ -12,14 +13,14 @@ import {UserService} from "./user.service";
 $('document').ready(function () {
     // Find elements with jQuery
     let searchForm = $('#search-bar').find('form');
-
     let clearHistoryBtn = $('#clear-history-btn');
+    let enableHistoryCheckbox = $('#enable-history-checkbox');
 
     // Handle connection issues
     connectionErrorMessage();
 
     // Pull up recommendations continuously
-    pullUpRecommendations()
+    pullUpRecommendations();
 
     // Hide big header when the search bar is activated
     searchForm.delegate(':input', 'focus', () => $('#header-img').collapse());
@@ -30,9 +31,12 @@ $('document').ready(function () {
         handleClick(event.target.query.value);
     });
 
-    clearHistoryBtn.bind('click', event => {
-        console.log("Clear history btn clicked.");
+    // User history handling
+    clearHistoryBtn.click(() => {
         UserService.user.clear();
+    });
+    enableHistoryCheckbox.change(function() {
+        settings.shouldUseHistory = this.checked;
     });
 
     // Bind user to user details view
@@ -72,7 +76,7 @@ function connectionErrorMessage() {
 
 function handleClick(queryTerm) {
     if (queryTerm)
-        search.search(queryTerm, null)
+        search.search(queryTerm, settings.shouldUseHistory ? UserService.user : null)
             .then(results => replaceResults(results, $('#results').find('.neutral')));
     return false;
 }

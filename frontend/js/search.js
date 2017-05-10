@@ -1,5 +1,5 @@
 import {Client} from "elasticsearch";
-import {elasticsearchUrls, maxResults, verbose} from "./settings";
+import {elasticsearchUrls, settings} from "./settings";
 const Promise = require('promise');
 
 let client = new Client({
@@ -12,7 +12,7 @@ function baseQuery(originalQuery) {
         index: 'news',
         type: 'article',
         body: {
-            size: maxResults,
+            size: settings.maxResults,
             query: {
                 function_score: {
                     query: {
@@ -201,7 +201,7 @@ function queryBody(originalQuery, user) {
             1
         ));
     }
-    if (verbose) {
+    if (settings.verbose) {
         console.log(JSON.stringify(q.body, null, 2))
     }
     return q;
