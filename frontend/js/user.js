@@ -5,6 +5,7 @@ export class ElasticUser {
         this.authors = [];
         this.sources = [];
         this.publishedDates = [];
+        this.visited = [];
         this.listeners = [];
         if (otherUser)
             Object.assign(this, otherUser);
@@ -25,12 +26,17 @@ export class ElasticUser {
         this.authors = [];
         this.sources = [];
         this.publishedDates = [];
+        this.visited = [];
         this.notifyListeners();
     }
 
     addDoc(doc) {
         addToList(this.keywords, doc.keywords);
         addToList(this.entities, doc.entities);
+        if(this.visited.indexOf(doc.url) == -1)
+        {
+            addToList(this.visited, [doc.url]);
+        }
         if(doc.author)
         {
             addToList(this.authors, [doc.author]);
