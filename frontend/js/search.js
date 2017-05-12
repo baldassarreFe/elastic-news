@@ -21,12 +21,47 @@ function baseQuery(originalQuery, searchResults) {
                             should: [],
                             must_not: []
                         }
-                    },
-                    field_value_factor: {
-                        field: "publishedAt",
-                        modifier: "sqrt",
-                        missing: 1483225200000 //2017-01-01 00:00:00
                     }                       
+                }
+            }
+        }
+    };
+    if (originalQuery){
+        res.body.query.function_score.query.bool.must.push({
+            multi_match: {
+                query: originalQuery,
+                fields: ["fullText^1", "title^2"]
+            }
+        });
+    }
+    return res;
+}
+
+function scoreQuery(originalQuery, searchResults) {
+    let res = {
+        index: 'news',
+        type: 'article',
+        body: {
+            size: searchResults,
+            query: {
+                function_score: {
+                    query: {
+                        bool: {
+                            must: [],
+                            should: [],
+                            must_not: []
+                        }
+                    },
+                    script_score:{
+                        script:{
+                            lang: "painless",
+                            file: "boostDate",
+                            params: {
+                                dates: []
+                            }
+                        }
+                    },
+                    boost_mode: "multiply"                      
                 }
             }
         }
@@ -171,10 +206,23 @@ function must_not(url){
     }
 }
 
+function score_function(dates){
+    return
+}
+
 function queryBody(originalQuery, user, searchResults) {
     let q = baseQuery(originalQuery, searchResults);
 
     if (user) {
+
+        if(user.visited.length > 0)
+        {
+            q = scoreQuery(originalQuery, searchResults);
+            q.body.query.function_score.script_score.script.params.dates = (
+                user.publishedDates
+                    .map(kv => new Date(kv.value).getTime())
+            );
+        }
 
         q.body.query.function_score.query.bool.should.push(subquery(
             user.keywords.slice(0, 10)

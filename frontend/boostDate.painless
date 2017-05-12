@@ -1,0 +1,21 @@
+double gaussian(def date, def current, def std)
+{
+    date = date/(1000*60*60); // Convert to hour
+    current = current/(1000*60*60); // Convert to hour
+    return (1/(Math.sqrt(2*Math.PI*Math.pow(std, 2))))*Math.exp(-Math.pow(date-current, 2)/(2*Math.pow(std,2)));
+}
+
+if(doc['publishedAt'].value == 0)
+{
+    return 0.001;
+}
+def now = new Date().getTime();
+double score = 0;
+for(def date : params.dates)
+{
+    score = score + gaussian(doc['publishedAt'].value, date, 100);
+}
+
+score = score + 10*gaussian(doc['publishedAt'].value, now, 100);
+
+return score;

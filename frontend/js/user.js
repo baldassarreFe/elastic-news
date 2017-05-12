@@ -44,7 +44,7 @@ export class ElasticUser {
         addToList(this.sources, [doc.source]);
         if(doc.publishedAt)
         {
-            addToList(this.publishedDates, [doc.publishedAt.substring(0,10)]);
+            addToList(this.publishedDates, [doc.publishedAt]);
         }
         this.notifyListeners();
     }
