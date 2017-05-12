@@ -206,18 +206,20 @@ function must_not(url){
     }
 }
 
-function score_function(dates){
-    return
-}
 
 function queryBody(originalQuery, user, searchResults) {
-    let q = baseQuery(originalQuery, searchResults);
+
+    if(originalQuery)
+    {
+        var q = scoreQuery(originalQuery, searchResults);
+    }else{
+        var q = baseQuery(originalQuery, searchResults);
+    }
 
     if (user) {
 
-        if(user.visited.length > 0)
+        if(originalQuery)
         {
-            q = scoreQuery(originalQuery, searchResults);
             q.body.query.function_score.script_score.script.params.dates = (
                 user.publishedDates
                     .map(kv => new Date(kv.value).getTime())
