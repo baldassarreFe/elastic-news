@@ -230,28 +230,28 @@ function queryBody(originalQuery, user, searchResults) {
             2
         ));
 
-
+        // User entities
         q.body.query.function_score.query.bool.should.push(subquery(
             user.entities.slice(0, 10)
                 .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
             2
         ));
 
-
+        // User sources
         q.body.query.function_score.query.bool.should.push(subquery(
             user.sources.slice(0, 10)
                 .map(kv => termQuery('sources.keywords', kv.value, kv.count)),
-            2
+            1.5
         ));
 
-
+        // User authors
         q.body.query.function_score.query.bool.should.push(subquery(
             user.authors.slice(0, 10)
                 .map(kv => termQuery('author.keyword', kv.value, kv.count)),
-            2
+            1.5
         ));
 
-
+        // User published dates
         q.body.query.function_score.query.bool.should.push(subquery(
             user.publishedDates.slice(0, 10)
                 .map(kv => rangeQuery('publishedDates.keywords', kv.value, kv.count)),
