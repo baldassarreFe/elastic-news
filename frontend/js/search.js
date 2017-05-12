@@ -167,34 +167,35 @@ function queryBody(originalQuery, user, searchResults) {
 
     if (user) {
 
-        q.body.query.function_score.query.bool.should.push(subquery(
+        // Use the user keywords to form recommendation search
+        q.body.query.function_score.query.bool.should.push(subquery( 
             user.keywords.slice(0, 10)
                 .map(kv => matchQuery('fullText', kv.value, kv.count)),
             2
         ));
 
-
+        // User entities
         q.body.query.function_score.query.bool.should.push(subquery(
             user.entities.slice(0, 10)
                 .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
             2
         ));
 
-
+        // User sources
         q.body.query.function_score.query.bool.should.push(subquery(
             user.sources.slice(0, 10)
                 .map(kv => termQuery('sources.keywords', kv.value, kv.count)),
             2
         ));
 
-
+        // User authors
         q.body.query.function_score.query.bool.should.push(subquery(
             user.authors.slice(0, 10)
                 .map(kv => termQuery('author.keyword', kv.value, kv.count)),
             2
         ));
 
-
+        // User published dates
         q.body.query.function_score.query.bool.should.push(subquery(
             user.publishedDates.slice(0, 10)
                 .map(kv => rangeQuery('publishedDates.keywords', kv.value, kv.count)),
