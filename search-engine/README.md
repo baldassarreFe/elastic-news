@@ -59,3 +59,13 @@ sudo sysctl -w vm.max_map_count=262144
 ```
 
 or permanently by adding the line `vm.max_map_count=262144` to `/etc/sysctl.conf`.
+
+**Script for calculating boost value used by Elastic
+
+Copy the file boostData.painless under ~/elasticsearch-5.3.0/config/scripts/
+
+'''bash
+cp boostDate.painless ~/elasticsearch-5.3.0/config/scripts/
+'''
+
+
