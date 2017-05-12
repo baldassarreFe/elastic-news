@@ -18,7 +18,8 @@ function baseQuery(originalQuery, searchResults) {
                     query: {
                         bool: {
                             must: [],
-                            should: []
+                            should: [],
+                            must_not: []
                         }
                     },
                     field_value_factor: {
@@ -162,6 +163,14 @@ function rangeQuery(fieldName, term, boost = 1) {
     }
 }
 
+function must_not(url){
+    return {
+        term: {
+            _id: url
+        }
+    }
+}
+
 function queryBody(originalQuery, user, searchResults) {
     let q = baseQuery(originalQuery, searchResults);
 
@@ -200,6 +209,12 @@ function queryBody(originalQuery, user, searchResults) {
                 .map(kv => rangeQuery('publishedDates.keywords', kv.value, kv.count)),
             1
         ));
+
+        // Don't recommend visited news
+        q.body.query.function_score.query.bool.must_not = (
+            user.visited
+                .map(kv => must_not(kv.value))
+        );
     }
     if (settings.verbose) {
         console.log(JSON.stringify(q.body, null, 2))
