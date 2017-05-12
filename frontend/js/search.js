@@ -7,7 +7,7 @@ let client = new Client({
     log: ['error', 'warning']
 });
 
-function baseQuery(originalQuery, searchResults) {
+function baseQuery(searchResults) {
     let res = {
         index: 'news',
         type: 'article',
@@ -26,14 +26,6 @@ function baseQuery(originalQuery, searchResults) {
             }
         }
     };
-    if (originalQuery){
-        res.body.query.function_score.query.bool.must.push({
-            multi_match: {
-                query: originalQuery,
-                fields: ["fullText^1", "title^2"]
-            }
-        });
-    }
     return res;
 }
 
@@ -191,7 +183,7 @@ function rangeQuery(fieldName, term, boost = 1) {
         range: {
             [fieldName]: {
                 "gte": term + "-1d/d",
-                "lt": term + "/d",
+                "lt": term + "+1/d",
                 boost: boost
             }
         }
@@ -209,22 +201,20 @@ function must_not(url){
 
 function queryBody(originalQuery, user, searchResults) {
 
-    if(originalQuery)
+    if(originalQuery || user.visited.length > 0)
     {
         var q = scoreQuery(originalQuery, searchResults);
     }else{
-        var q = baseQuery(originalQuery, searchResults);
+        var q = baseQuery(searchResults);
     }
 
-    if (user) {
+    if (user && user.visited.length > 0) {
 
-        if(originalQuery)
-        {
-            q.body.query.function_score.script_score.script.params.dates = (
-                user.publishedDates
-                    .map(kv => new Date(kv.value).getTime())
-            );
-        }
+        // Boost date
+        q.body.query.function_score.script_score.script.params.dates = (
+            user.publishedDates
+                .map(kv => new Date(kv.value).getTime())
+        );
 
         q.body.query.function_score.query.bool.should.push(subquery(
             user.keywords.slice(0, 10)
