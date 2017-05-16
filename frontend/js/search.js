@@ -217,14 +217,14 @@ function queryBody(originalQuery, user, searchResults) {
         );
 
         q.body.query.function_score.query.bool.should.push(subquery(
-            user.keywords.slice(0, 10)
+            user.keywords.slice(0, 50)
                 .map(kv => matchQuery('fullText', kv.value, kv.count)),
             2
         ));
 
         // User entities
         q.body.query.function_score.query.bool.should.push(subquery(
-            user.entities.slice(0, 10)
+            user.entities.slice(0, 50)
                 .map(kv => termQuery('entities.keywords', kv.value, kv.count)),
             2
         ));
